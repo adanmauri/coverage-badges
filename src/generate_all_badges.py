@@ -1,41 +1,28 @@
-"""Script para generar badges pre-hechos con diferentes niveles de coverage.
+"""Script to generate pre-made badges with different coverage levels.
 
-Genera badges SVG para niveles de coverage de 0% a 100% en incrementos
-de 5%, para que puedan ser fácilmente importados en otros proyectos.
+Generates SVG badges for coverage levels from 0% to 100% in 5% increments,
+so they can be easily imported in other projects.
 """
 
-import sys
+import logging
 from pathlib import Path
 
-# Agregar el directorio padre al path para importar módulos
-sys.path.insert(0, str(Path(__file__).parent.parent))
+from src.badge_generator import BadgeGenerator
 
-from src.generate_badge import generate_svg
+logger = logging.getLogger(__name__)
 
 
 def main() -> None:
-    """Genera badges para todos los niveles de coverage."""
+    """Generate badges for all coverage levels."""
     badges_dir = Path("badges")
     badges_dir.mkdir(exist_ok=True)
-    
-    # Generar badges de 0% a 100% en incrementos de 5%
+
     for coverage in range(0, 101, 5):
-        svg_content = generate_svg(float(coverage))
         output_file = badges_dir / f"coverage-{coverage}.svg"
-        output_file.write_text(svg_content, encoding="utf-8")
-        print(f"Generated: {output_file}")
-    
-    # También generar algunos valores específicos comunes
-    for coverage in [25, 35, 45, 55, 65, 75, 85, 95]:
-        if coverage % 5 != 0:  # Evitar duplicados
-            svg_content = generate_svg(float(coverage))
-            output_file = badges_dir / f"coverage-{coverage}.svg"
-            output_file.write_text(svg_content, encoding="utf-8")
-            print(f"Generated: {output_file}")
-    
-    print(f"\nTotal badges generated in {badges_dir}/")
+        badge_generator = BadgeGenerator()
+        badge_path = badge_generator.generate_and_save_badge(float(coverage), output_file)
+        logger.info("Badge generated and saved to %s", badge_path)
 
 
 if __name__ == "__main__":
     main()
-

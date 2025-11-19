@@ -1,0 +1,85 @@
+name: Tests & Coverage
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: .pip-cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install pipenv
+        env:
+          PIP_CACHE_DIR: .pip-cache
+        run: |
+          pip install --upgrade pip pipenv --root-user-action=ignore --cache-dir="$PIP_CACHE_DIR"
+
+      - name: Install dependencies
+        env:
+          PIP_CACHE_DIR: .pip-cache
+        run: |
+          pipenv install --system --dev --deploy
+
+      - name: Run tests with coverage
+        run: |
+          pipenv run pytest tests/ --cov=src --cov-report=xml --cov-report=term-missing --cov-report=json -v
+
+      - name: Extract coverage percentage
+        id: coverage
+        run: |
+          COVERAGE=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.2f}\")")
+          echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
+          echo "Coverage: $COVERAGE%"
+
+      - name: Generate coverage badge
+        run: |
+          export PYTHONPATH=.
+          python -m src.generate_badge ${{ steps.coverage.outputs.coverage }} -o coverage.svg -d .
+          ls -la coverage.svg
+          test -f coverage.svg && echo "Badge generated successfully" || exit 1
+
+      - name: Commit and push coverage badge
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git status
+          git add coverage.svg
+          if git diff --staged --quiet; then
+            echo "No changes to commit. Badge is already up to date."
+          else
+            git commit -m "Update coverage badge to ${{ steps.coverage.outputs.coverage }}%"
+            git push
+          fi

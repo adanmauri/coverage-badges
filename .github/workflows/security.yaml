@@ -1,0 +1,169 @@
+---
+name: Security & Vulnerability Analysis
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Cache Trivy database
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: ${{ runner.os }}-trivy-db
+          restore-keys: |
+            ${{ runner.os }}-trivy-
+
+      - name: Run Trivy vulnerability scanner
+        id: trivy-scan
+        uses: aquasecurity/trivy-action@0.28.0
+        continue-on-error: true
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
+          skip-dirs: |
+            .git
+            .github
+            node_modules
+            __pycache__
+            .pytest_cache
+            .mypy_cache
+            .ruff_cache
+            .ipynb_checkpoints
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() && steps.trivy-scan.outcome != 'skipped' && hashFiles('trivy-results.sarif') != ''
+        with:
+          sarif_file: "trivy-results.sarif"
+          wait-for-processing: true
+
+      - name: Display Trivy summary
+        if: always()
+        run: |
+          {
+            echo "## 🔍 Trivy Security Scan Results"
+            if [ -f "trivy-results.sarif" ] && [ -s "trivy-results.sarif" ]; then
+              echo "✅ Scan completed. Results uploaded to GitHub Security tab."
+              echo ""
+              echo "**Note:** Check the Security tab for detailed vulnerability information."
+            else
+              echo "⚠️  Scan completed but no results file was generated."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  bandit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: .pip-cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Install pipenv and dependencies
+        env:
+          PIP_CACHE_DIR: .pip-cache
+        run: |
+          pip install --upgrade pip pipenv --root-user-action=ignore --cache-dir="$PIP_CACHE_DIR"
+          pipenv install --system --dev --deploy
+
+      - name: Run Bandit security scan
+        id: bandit-scan
+        continue-on-error: true
+        run: |
+          if [ ! -d "src" ]; then
+            echo "⚠️  Warning: src/ directory not found. Skipping Bandit scan."
+            exit 0
+          fi
+          bandit -r src/ --severity-level medium --confidence-level medium -c pyproject.toml -f json -o bandit-report.json
+          bandit -r src/ --severity-level medium --confidence-level medium -c pyproject.toml -f txt -o bandit-report.txt
+
+      - name: Display Bandit results
+        if: always()
+        run: |
+          {
+            echo "## 🔒 Bandit Security Scan Results"
+
+            if [ ! -f bandit-report.json ]; then
+              if [ -d "src" ]; then
+                echo "✅ Bandit scan completed with no issues found"
+              else
+                echo "⚠️  Skipped: src/ directory not found"
+              fi
+              exit 0
+            fi
+
+            if command -v jq &> /dev/null; then
+              HIGH=$(jq -r '.metrics._totals.HIGH // 0' bandit-report.json 2>/dev/null || echo "0")
+              MEDIUM=$(jq -r '.metrics._totals.MEDIUM // 0' bandit-report.json 2>/dev/null || echo "0")
+              LOW=$(jq -r '.metrics._totals.LOW // 0' bandit-report.json 2>/dev/null || echo "0")
+              TOTAL=$((HIGH + MEDIUM + LOW))
+
+              echo "### Summary"
+              echo "- **Total Issues**: $TOTAL"
+              echo "- **High Severity**: $HIGH"
+              echo "- **Medium Severity**: $MEDIUM"
+              echo "- **Low Severity**: $LOW"
+              echo ""
+
+              if [ "$TOTAL" -gt 0 ]; then
+                echo "### Detailed Report"
+                echo '```'
+                if [ -f bandit-report.txt ]; then
+                  head -n 100 bandit-report.txt
+                else
+                  echo "Check JSON report for details."
+                fi
+                echo '```'
+              else
+                echo "✅ No security issues found!"
+              fi
+            else
+              echo "⚠️  jq not available. Showing raw report:"
+              if [ -f bandit-report.txt ]; then
+                head -n 50 bandit-report.txt
+              else
+                echo "Check JSON report for details."
+              fi
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

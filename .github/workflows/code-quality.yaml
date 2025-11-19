@@ -1,0 +1,52 @@
+name: Code Quality & Linting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  megalinter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: .pip-cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Run MegaLinter
+        uses: oxsecurity/megalinter/flavors/python@v9.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MEGALINTER_CACHE: true
+          PIP_CACHE_DIR: /github/workspace/.pip-cache
+          PYTHON_ISORT_CONFIG_FILE: pyproject.toml
+          DISABLE_LINTERS: PYTHON_BANDIT
+          PRE_COMMANDS: >
+            [
+              {
+                "command": "pip install --upgrade pip pipenv --root-user-action=ignore --cache-dir=$PIP_CACHE_DIR"
+              },
+              {
+                "command": "pipenv install --system --dev --deploy"
+              }
+            ]

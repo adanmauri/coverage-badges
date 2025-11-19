@@ -1,0 +1,65 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Generate Badge",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.generate_badge",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["85.5", "-o", "test-badge.svg", "-d", "badges"]
+    },
+    {
+      "name": "Generate Badge (Custom)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.generate_badge",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "${input:coverage}",
+        "-o",
+        "${input:outputFile}",
+        "-l",
+        "${input:label}",
+        "-d",
+        "${input:directory}"
+      ]
+    },
+    {
+      "name": "Generate All Badges",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.generate_all_badges",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "coverage",
+      "type": "promptString",
+      "description": "Coverage percentage (0-100)",
+      "default": "85.5"
+    },
+    {
+      "id": "outputFile",
+      "type": "promptString",
+      "description": "Output filename (e.g., badge.svg)",
+      "default": "badge.svg"
+    },
+    {
+      "id": "label",
+      "type": "promptString",
+      "description": "Badge label",
+      "default": "Coverage"
+    },
+    {
+      "id": "directory",
+      "type": "promptString",
+      "description": "Output directory",
+      "default": "badges"
+    }
+  ]
+}
