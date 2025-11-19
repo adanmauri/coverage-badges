@@ -1,0 +1,14 @@
+{
+  "name": "coverage-badges",
+  "version": "1.0.0",
+  "description": "SVG badges de coverage para importar en README.md de proyectos GitHub",
+  "keywords": [
+    "coverage",
+    "badges",
+    "svg",
+    "github"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+

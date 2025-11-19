@@ -1,0 +1,120 @@
+# Cursor Rules for Good Apple ML Project
+
+## Language and Communication
+
+- **All comments and messages must be in English**
+- **Logs must not use emojis** - Use plain text messages only
+- **Error messages and user-facing text must be in English**
+
+## Python Version and Type Hints
+
+- **Python 3.10+ syntax is required**
+- Use built-in types instead of `typing` module when possible:
+  - Use `dict` instead of `typing.Dict`
+  - Use `list` instead of `typing.List`
+  - Use `tuple` instead of `typing.Tuple`
+  - Use `set` instead of `typing.Set`
+- Use union syntax `type | None` instead of `Optional[type]`
+- Use `type1 | type2` instead of `Union[type1, type2]`
+- Only import from `typing` when necessary (e.g., `Any`, `IO`, `BinaryIO`, `TextIO`, `cast`)
+
+### Examples:
+```python
+# ✅ Correct (Python 3.10+)
+def process_data(data: dict[str, int]) -> list[str] | None:
+    ...
+
+# ❌ Incorrect
+from typing import Dict, List, Optional
+def process_data(data: Dict[str, int]) -> Optional[List[str]]:
+    ...
+```
+
+## Docstring Format
+
+All docstrings must follow this format:
+
+### Module-level docstrings:
+```python
+"""Brief description of the module.
+
+More detailed description that explains what the module does,
+its purpose, and key concepts. Can span multiple lines to
+provide comprehensive context about the module's functionality.
+
+Additional paragraphs can be added to explain more complex
+aspects or usage patterns.
+"""
+```
+
+### Class docstrings:
+```python
+class MyClass:
+    """Brief description of the class.
+
+    More detailed description explaining the class purpose,
+    its main responsibilities, and how it fits into the
+    larger system architecture.
+
+    Additional context about usage patterns or important
+    design decisions.
+    """
+```
+
+### Method/Function docstrings:
+```python
+def my_method(self, param1: str, param2: int | None = None) -> dict[str, Any]:
+    """Brief description of what the method does."""
+```
+
+### Key docstring guidelines:
+- Start with a brief one-line summary
+- Follow with a blank line
+- Add detailed description in paragraphs
+- Be descriptive and clear
+- Use proper capitalization and punctuation
+- Document all public methods, classes, and modules
+
+## Code Style
+
+- Follow PEP 8 guidelines
+- Use Black for formatting (line length: 100)
+- Use type hints for all function/method signatures
+- Use descriptive variable and function names
+- Prefer explicit over implicit code
+
+## Imports
+
+- Group imports: standard library, third-party, local imports
+- Use absolute imports from `src.` prefix
+- Sort imports with isort (Black profile)
+
+## Error Handling
+
+- Use specific exception types when possible
+- Include descriptive error messages in English
+- Use `ValueError` for invalid input
+- Use `FileNotFoundError` for missing files
+- Use `NotImplementedError` for abstract methods
+
+## Logging
+
+- Use standard `logging` module if logging is needed
+- Do not use emojis in log messages
+- Use appropriate log levels (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+- Include context in log messages
+
+## Testing
+
+- Write tests for all public functions and classes
+- Use pytest for testing
+- Test files should be in `tests/` directory
+- Test file names should start with `test_`
+- Use descriptive test function names starting with `test_`
+
+## Dependency Management
+
+- **Use Pipenv for dependency management**
+- **Production dependencies (`[packages]`)**: Always use fixed versions (e.g., `pandas = "==2.3.3"`)
+- **Development dependencies (`[dev-packages]`)**: Use `*` for flexible versions (e.g., `pytest = "*"`)
+- This ensures reproducible production builds while allowing flexibility for development tools
