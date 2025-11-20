@@ -1,3 +1,4 @@
+---
 name: Code Quality & Linting
 
 on:
@@ -37,7 +38,7 @@ jobs:
         uses: oxsecurity/megalinter/flavors/python@v9.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MEGALINTER_CACHE: true
+          MEGALINTER_CACHE: "true"
           PIP_CACHE_DIR: /github/workspace/.pip-cache
           PYTHON_ISORT_CONFIG_FILE: pyproject.toml
           DISABLE_LINTERS: PYTHON_BANDIT
