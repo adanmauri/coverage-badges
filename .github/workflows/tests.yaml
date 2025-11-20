@@ -1,3 +1,4 @@
+---
 name: Tests & Coverage
 
 on:
@@ -60,26 +61,28 @@ jobs:
         id: coverage
         run: |
           COVERAGE=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.2f}\")")
+          ROUNDED=$(python -c "coverage = float('$COVERAGE'); rounded = round(coverage / 5) * 5; rounded = int(min(100, max(0, rounded))); print(rounded)")
           echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
-          echo "Coverage: $COVERAGE%"
+          echo "rounded=$ROUNDED" >> "$GITHUB_OUTPUT"
+          echo "Coverage: $COVERAGE% (rounded to $ROUNDED% for badge)"
 
-      - name: Generate coverage badge
+      - name: Update README with coverage badge
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          export PYTHONPATH=.
-          python -m src.generate_badge ${{ steps.coverage.outputs.coverage }} -o coverage.svg -d .
-          ls -la coverage.svg
-          test -f coverage.svg && echo "Badge generated successfully" || exit 1
+          ROUNDED=${{ steps.coverage.outputs.rounded }}
+          sed -i "s|coverage-100\.svg|coverage-${ROUNDED}.svg|g" README.md
+          echo "Updated README to use coverage-${ROUNDED}.svg"
 
-      - name: Commit and push coverage badge
+      - name: Commit and push README with updated coverage badge
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git status
-          git add coverage.svg
+          git add README.md
           if git diff --staged --quiet; then
-            echo "No changes to commit. Badge is already up to date."
+            echo "No changes to commit. README is already up to date."
           else
-            git commit -m "Update coverage badge to ${{ steps.coverage.outputs.coverage }}%"
+            git commit -m "Update coverage badge to ${{ steps.coverage.outputs.coverage }}% (rounded to ${{ steps.coverage.outputs.rounded }}%)"
             git push
           fi
