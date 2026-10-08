@@ -4,13 +4,12 @@
 
 ## Context
 
-CI linted with MegaLinter (Python flavor) and nothing ran locally, although the README promised
-pre-commit hooks. Problems surfaced only after a push, and an agent had no single command that
-told it a change was done. The owner's other repositories run one `.pre-commit-config.yaml` from
+CI linted with MegaLinter (Python flavor) and nothing ran locally, so problems surfaced only after
+a push, and an agent had no single command that told it a change was done. The owner's other repositories run one `.pre-commit-config.yaml` from
 the commit hook, `make check` and CI alike.
 
-Running only pre-commit in CI would drop the non-Python linters the MegaLinter flavor ships (for
-Markdown, YAML and JSON, among others). Running only MegaLinter keeps the slow feedback loop.
+Running only pre-commit in CI would drop the scanners the MegaLinter flavor ships (dependency
+vulnerabilities, links, JSON schemas, among others). Running only MegaLinter keeps the slow feedback loop.
 During the migration a pyright error reached a commit because the local hooks had no type checkers
 while MegaLinter runs them, which shows the cost of the two lists drifting.
 

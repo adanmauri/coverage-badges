@@ -4,10 +4,10 @@
 
 ## Context
 
-The project declared its tools in a Pipfile, but Pipenv was not installed on the maintainer's
-machine, the owner's other repositories use uv, and the tests were already running through
-`uv run` to get a Python 3.10 interpreter for the compatibility check. Two toolchains for one small
-repository meant two ways to get an environment, and a lock file nobody could use locally.
+The project declared its tools in a Pipfile, while the maintainer works with uv, as in the
+owner's other repositories, and the tests already ran through `uv run` to get a Python 3.10
+interpreter for the compatibility check. Two toolchains for one small repository meant two ways to
+get an environment.
 
 ## Options
 

@@ -4,11 +4,10 @@
 
 ## Context
 
-The only agent guidance was a `.cursorrules` file copied from another project (its title named a
-different one). Claude Code, Cursor and GitHub Copilot each read instructions from their own
-location, so supporting all three by hand means three copies that drift. The owner's other
-repositories (boxytrack, qi-ingestion) solved this the same way, and this repository should work
-like them.
+Agent guidance was a single `.cursorrules` file, which only Cursor reads. Claude Code, Cursor and
+GitHub Copilot each read instructions from their own location, so supporting all three by hand
+means three copies that drift. The owner's other repositories (boxytrack, qi-ingestion) keep one
+copy and generate the rest, and this repository works like them.
 
 ## Options
 
