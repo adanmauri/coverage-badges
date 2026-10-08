@@ -147,28 +147,10 @@ Thumbs.db
 # Ruff
 .ruff_cache/
 
-# Type checking{
-  "recommendations": [
-    "charliermarsh.ruff",
-    "eamodio.gitlens",
-    "gruntfuggly.todo-tree",
-    "ms-azuretools.vscode-docker",
-    "ms-python.black-formatter",
-    "ms-python.flake8",
-    "ms-python.isort",
-    "ms-python.mypy-type-checker",
-    "ms-python.pylint",
-    "ms-python.pyright",
-    "ms-python.python",
-    "ms-python.vscode-pylance",
-    "ms-toolsai.jupyter",
-    "ms-vscode-remote.remote-containers",
-    "ms-vscode.powershell",
-    "ms-vscode.vscode-json",
-    "njpwerner.autodocstring",
-    "redhat.vscode-yaml",
-    "usernamehw.errorlens"
-  ]
-}
+# Type checking
 
 .pytype/
+
+# Agents: personal settings and scratch files (e.g. pr-body.tmp from the write-pr skill)
+.claude/settings.local.json
+*.tmp

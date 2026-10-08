@@ -89,7 +89,7 @@ If you're new to the project and would like guidance on where to start, feel fre
 
 ## Style Guidelines
 
-This project follows strict style guidelines to ensure consistency. Please read the `.cursorrules` file for complete details.
+This project follows strict style guidelines to ensure consistency. The binding rules live in [`.agents/rules/`](.agents/rules/) and [`AGENTS.md`](AGENTS.md); run `make setup` once and `make check` before opening a PR.
 
 ### Python Version
 

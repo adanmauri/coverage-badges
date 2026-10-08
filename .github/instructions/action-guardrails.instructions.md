@@ -1,0 +1,8 @@
+---
+applyTo: '**'
+---
+
+# Rules: action guardrails
+
+**Source of truth:** the authoritative version of this rule lives in
+[`.agents/rules/action-guardrails.md`](../../.agents/rules/action-guardrails.md). Read it and follow it completely.

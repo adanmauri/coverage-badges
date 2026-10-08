@@ -1,0 +1,7 @@
+# Coverage Badges: agent instructions
+
+**Source of truth:** The operating guidelines for AI agents in this repo live in
+the repo-root [`AGENTS.md`](../AGENTS.md), the canonical vendor-neutral
+instructions file.
+
+Read that file and follow it completely.

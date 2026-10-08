@@ -1,0 +1,9 @@
+---
+description: Coding standards for AI agents and humans working in Coverage Badges
+alwaysApply: true
+---
+
+# Rules: coding standards
+
+**Source of truth:** the authoritative version of this rule lives in
+[`.agents/rules/coding-standards.md`](../../.agents/rules/coding-standards.md). Read it and follow it completely.

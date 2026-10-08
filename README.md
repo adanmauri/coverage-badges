@@ -167,16 +167,18 @@ coverage-badges/
 ```
 
 ```bash
-pipenv install --dev
-pipenv run pytest tests/ --cov=src --cov-report=term-missing
+make setup   # once per clone: installs the pre-commit and commit-msg hooks (needs uv)
+make check   # hooks over the whole repo, then the tests on Python 3.14 and 3.10
+make help    # every target
 ```
 
 The test suite runs `publish-badge.sh` against a local bare repository, so it needs `git`. The CI
 also runs the action on this repository to publish its own badge, and checks the generator with the
-system Python 3.10 of Ubuntu 22.04.
+system Python 3.10 of Ubuntu 22.04. Code style, linting and security checks (Black, isort, Ruff,
+Pylint, Flake8, mypy, Bandit, Trivy) run in CI through MegaLinter.
 
-Code style, linting and security checks (Black, isort, Ruff, Pylint, Flake8, mypy, Bandit, Trivy)
-run in CI through MegaLinter. See [CONTRIBUTING.md](CONTRIBUTING.md) for the coding standards.
+AI agents follow [AGENTS.md](AGENTS.md), with rules and skills under [`.agents/`](.agents/README.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ## Contributing
 
