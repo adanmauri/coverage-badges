@@ -1,4 +1,4 @@
-.PHONY: help setup check lint test test-compat sync-agents check-agents
+.PHONY: help setup check lint test test-compat sync-agents check-agents check-linter-versions
 
 PRE_COMMIT := uvx pre-commit@4.3.0
 
@@ -25,3 +25,6 @@ sync-agents: ## Regenerate agent pointers from .agents/
 
 check-agents: ## Fail if agent pointers drifted from .agents/
 	uv run --no-project tooling/sync_agents.py --check
+
+check-linter-versions: ## Fail if a linter version differs from the MegaLinter image (needs network)
+	uv run --no-project tooling/check_linter_versions.py

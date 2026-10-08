@@ -8,6 +8,19 @@ on:
   pull_request:
     branches:
       - main
+    # Pull requests that change none of these skip the tests; main always runs them, and
+    # publishes the badge (docs/adr/0008).
+    paths:
+      - "action.yml"
+      - "scripts/**"
+      - "src/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".python-version"
+      - ".github/workflows/tests.yaml"
+
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,8 +34,9 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+      # The credentials stay: the badge step pushes with them on main.
+      - name: Checkout code # zizmor: ignore[artipacked]
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
 
       - name: Set up uv
         uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
@@ -50,7 +64,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
 
       - name: Generate a badge from every fixture format
         run: |

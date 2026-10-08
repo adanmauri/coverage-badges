@@ -28,15 +28,15 @@ ADR_INDEX = ADR_DIR / "README.md"
 
 SKIP_DIRS = {".git", ".venv", "node_modules", "megalinter-reports"}
 
-FENCE_RE = re.compile(r"^(```|~~~).*?^\1", re.M | re.S)
+FENCE_RE = re.compile(r"^(```|~~~).*?^\1", re.MULTILINE | re.DOTALL)
 CODE_RE = re.compile(r"`[^`\n]*`")
-COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
+COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 INLINE_LINK_RE = re.compile(r"\]\(<?([^)\s>]+)>?(?:\s+\"[^\"]*\")?\)")
-REF_LINK_RE = re.compile(r"^\s*\[[^\]]+\]:\s*<?(\S+?)>?(?:\s|$)", re.M)
-EXTERNAL_RE = re.compile(r"^[a-z][a-z0-9+.-]*:", re.I)
+REF_LINK_RE = re.compile(r"^\s*\[[^\]]+\]:\s*<?(\S+?)>?(?:\s|$)", re.MULTILINE)
+EXTERNAL_RE = re.compile(r"^[a-z][a-z0-9+.-]*:", re.IGNORECASE)
 ADR_FILE_RE = re.compile(r"^(\d{4})-[a-z0-9-]+\.md$")
-ADR_H1_RE = re.compile(r"^# (\d{4})\. \S", re.M)
-RESERVED_RE = re.compile(r"^## Reserved$(.*?)(?=^## |\Z)", re.M | re.S)
+ADR_H1_RE = re.compile(r"^# (\d{4})\. \S", re.MULTILINE)
+RESERVED_RE = re.compile(r"^## Reserved$(.*?)(?=^## |\Z)", re.MULTILINE | re.DOTALL)
 
 
 def markdown_files() -> Iterator[Path]:

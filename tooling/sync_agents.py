@@ -35,7 +35,7 @@ def parse(path: Path) -> tuple[dict[str, str], str]:
     text = path.read_text(encoding="utf-8")
     fields: dict[str, str] = {}
     body = text
-    match = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+    match = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
     if match:
         body = text[match.end() :]
         for line in match.group(1).splitlines():
@@ -45,7 +45,7 @@ def parse(path: Path) -> tuple[dict[str, str], str]:
                 if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
                     value = value[1:-1]
                 fields[key.strip()] = value
-    title = re.search(r"^# (.+)$", body, re.M)
+    title = re.search(r"^# (.+)$", body, re.MULTILINE)
     return fields, title.group(1).strip() if title else path.stem
 
 

@@ -6,6 +6,8 @@ on:
     branches:
       - main
 
+permissions: {}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -19,7 +21,9 @@ jobs:
       pull-requests: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
 
       - name: Remove excluded directories
         run: |
@@ -32,6 +36,6 @@ jobs:
           rm -rf .venv venv htmlcov .pip-cache megalinter-reports
 
       - name: Create issues from TODOs
-        uses: alstr/todo-to-issue-action@v5
+        uses: alstr/todo-to-issue-action@37bb7b56e58569ef273b60678048030a7f0c261a # v5.1.15
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

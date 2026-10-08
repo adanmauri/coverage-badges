@@ -1,8 +1,10 @@
 # Local checks: the commit hook and `make lint` run this file. Install the hooks once with
-# `make setup`. CI runs MegaLinter (.github/workflows/code-quality.yaml); the Python linters it
-# runs are also here, so a commit that passes locally does not fail there.
-# Python tool revs match uv.lock. Bump revs with `pre-commit autoupdate` (pick releases at
-# least two weeks old).
+# `make setup`. CI runs MegaLinter (.github/workflows/code-quality.yaml) with the same linters at
+# the same versions, so a commit that passes locally does not fail there (docs/adr/0007):
+# - Python linters run from uv.lock, pinned in pyproject.toml.
+# - actionlint, shellcheck and zizmor keep the rev of the version in the MegaLinter image.
+# check-linter-versions fails when either side drifts. Bump the other revs with
+# `pre-commit autoupdate` (pick releases at least two weeks old).
 
 default_install_hook_types: [pre-commit, commit-msg]
 
@@ -30,26 +32,6 @@ repos:
     hooks:
       - id: uv-lock
 
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 25.11.0
-    hooks:
-      - id: black
-
-  - repo: https://github.com/PyCQA/isort
-    rev: 7.0.0
-    hooks:
-      - id: isort
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.5
-    hooks:
-      - id: ruff-check
-
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.3.0
-    hooks:
-      - id: flake8
-
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.11.0.1
     hooks:
@@ -61,15 +43,38 @@ repos:
       - id: actionlint
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.30.1
+    rev: v1.25.0
     hooks:
       - id: zizmor
         args: [--offline]
-        # Only the published action for now; the workflows have findings to fix first (TODO.md).
-        files: ^action\.yml$
 
   - repo: local
     hooks:
+      - id: black
+        name: black
+        entry: uv run --locked black
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+      - id: isort
+        name: isort
+        # Its own resolution: pylint, in the lint group, requires an older isort (pyproject.toml).
+        entry: uv run --locked --isolated --no-default-groups --group isort isort --filter-files
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+      - id: ruff-check
+        name: ruff
+        entry: uv run --locked ruff check --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+      - id: flake8
+        name: flake8
+        entry: uv run --locked flake8
+        language: system
+        types: [python]
+        require_serial: true
       - id: mypy
         name: mypy
         entry: uv run --locked mypy src tests tooling
@@ -94,6 +99,13 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
+      - id: check-linter-versions
+        name: linter versions match the MegaLinter image
+        # Reads the image's Dockerfile from GitHub, so it runs only when a version can change.
+        entry: uv run --no-project tooling/check_linter_versions.py
+        language: system
+        pass_filenames: false
+        files: ^(pyproject\.toml|\.pre-commit-config\.yaml|\.github/workflows/code-quality\.yaml|tooling/check_linter_versions\.py)$
       - id: check-agents
         name: agent pointers in sync with .agents/
         entry: uv run --no-project tooling/sync_agents.py --check

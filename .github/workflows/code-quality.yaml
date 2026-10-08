@@ -8,6 +8,11 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    # New advisories reach dependencies nobody changed (Trivy, Grype, OSV-Scanner).
+    - cron: "0 6 * * 1"
+
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,15 +25,42 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-      security-events: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          # Pull requests lint the files they change, found with `git diff origin/main...`,
+          # which needs the merge base.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check local linter versions against the MegaLinter image
+        run: python3 tooling/check_linter_versions.py
+
+      - name: Choose what to lint
+        id: scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          # Files that change what the linters report. A pull request touching one lints
+          # everything, or a stricter rule would pass the pull request and fail main.
+          LINT_SETTINGS: >-
+            ^(\.mega-linter\.yml|\.pre-commit-config\.yaml|pyproject\.toml|\.flake8|\.cspell\.json|\.github/workflows/code-quality\.yaml)$
+        # Pull requests lint what they change; main and the weekly run lint everything
+        # (docs/adr/0008).
+        run: |
+          all=true
+          if [ "$EVENT_NAME" = pull_request ] &&
+            ! git diff --name-only "origin/$BASE_REF...HEAD" | grep -qE "$LINT_SETTINGS"; then
+            all=false
+          fi
+          echo "Lint the whole codebase: $all"
+          echo "all=$all" >> "$GITHUB_OUTPUT"
 
       - name: Run MegaLinter
-        uses: oxsecurity/megalinter/flavors/python@v9.1.0
+        uses: oxsecurity/megalinter/flavors/python@9949bad031045f366be2467e00e8371a7328a2e2 # v10.1.0
         # Linter settings live in .mega-linter.yml.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MEGALINTER_CACHE: "true"
+          VALIDATE_ALL_CODEBASE: ${{ steps.scope.outputs.all }}

@@ -6,30 +6,45 @@
 # Report, never push fixes from CI.
 APPLY_FIXES: none
 
-# Every linter the Python flavor ships runs, and those that find no files switch themselves off.
-# No ENABLE_ERRORS_LINTERS yet: every active linter blocks the job. Once a run on main shows which
-# linters are at zero, list those here so a linter added by a new image version reports first
-# instead of turning CI red overnight (TODO.md).
+# Pull requests lint the files that differ from main; the workflow sets VALIDATE_ALL_CODEBASE
+# per event (docs/adr/0008).
+DEFAULT_BRANCH: main
 
-# Bandit runs in .github/workflows/security.yaml with its own report in the job summary.
-DISABLE_LINTERS:
-  - PYTHON_BANDIT
+# Every linter the Python flavor ships runs and blocks; those that find no files switch
+# themselves off. A linter that does not fit this repository goes under DISABLE_LINTERS with the
+# reason, instead of running without blocking: a finding that never fails CI is never fixed.
 
-# isort reads its settings (Black profile, line length 100) from pyproject.toml.
+# The Python linters read the settings the local hooks read. Without these, MegaLinter falls back
+# to its own default files when the repository has none by the name it looks for (a .pylintrc,
+# a .ruff.toml with line-length 88...). black finds pyproject.toml and flake8 finds .flake8.
+PYTHON_BANDIT_CONFIG_FILE: pyproject.toml
 PYTHON_ISORT_CONFIG_FILE: pyproject.toml
+PYTHON_MYPY_CONFIG_FILE: pyproject.toml
+PYTHON_PYLINT_CONFIG_FILE: pyproject.toml
+PYTHON_RUFF_CONFIG_FILE: pyproject.toml
+
+# Bandit scans the code the action runs, as the local hook does; tests/ and tooling/ never ship.
+PYTHON_BANDIT_FILTER_REGEX_INCLUDE: ^src/
 
 # tests/fixtures/ holds coverage reports in the exact shape the tools write them, so formatting
 # rules do not apply. The others are trees nobody writes by hand.
 FILTER_REGEX_EXCLUDE: '(^tests/fixtures/|/\.venv/|^\.venv/|megalinter-reports/)'
 
-# Python linters need the project's dev dependencies to resolve imports (pytest in tests/). The
-# container has pip but no uv, so install uv, export the lock (docs/adr/0004) and install from it.
+# mypy, pylint and pyright resolve the imports in tests/ (pytest). Every Python linter has its
+# own venv in the image, so the test group from uv.lock goes into the venvs of mypy and pylint,
+# and into the system Python that pyright, a Node.js tool, inspects. The image ships uv.
 PRE_COMMANDS:
-  - command: pip install --root-user-action=ignore uv
-    cwd: workspace
   - command: >-
-      uv export --frozen --no-hashes --no-emit-project --all-groups
-      --output-file /tmp/requirements-dev.txt
+      uv export --frozen --no-hashes --no-emit-project --only-group test
+      --output-file /tmp/requirements-test.txt
     cwd: workspace
-  - command: uv pip install --system --break-system-packages -r /tmp/requirements-dev.txt
+    continue_if_failed: false
+  - command: pip install --quiet -r /tmp/requirements-test.txt
+    venv: mypy
+    continue_if_failed: false
+  - command: pip install --quiet -r /tmp/requirements-test.txt
+    venv: pylint
+    continue_if_failed: false
+  - command: uv pip install --system --break-system-packages -r /tmp/requirements-test.txt
     cwd: workspace
+    continue_if_failed: false
