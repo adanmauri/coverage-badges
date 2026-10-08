@@ -8,6 +8,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/GitHub%20Action-composite-2088FF.svg?logo=githubactions&logoColor=white" alt="GitHub Action: composite">
   <img src="https://img.shields.io/badge/python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/Bash-4EAA25.svg?logo=gnubash&logoColor=white" alt="Bash">
+  <img src="https://img.shields.io/badge/Git-F05032.svg?logo=git&logoColor=white" alt="Git">
   <img src="https://img.shields.io/badge/runtime%20dependencies-none-brightgreen.svg" alt="Runtime dependencies: none">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <br>
