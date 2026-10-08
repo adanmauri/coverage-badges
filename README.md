@@ -7,6 +7,7 @@
 <p align="center">
     <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/code-quality.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/code-quality.yaml/badge.svg" alt="Code Quality"></a>
     <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml/badge.svg" alt="Tests & Coverage"></a>
+    <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml/badge.svg" alt="Security"></a>
 </p>
 <p align="center">
     <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml"><img src="https://github.com/adanmauri/coverage-badges/raw/badges/coverage.svg" alt="Coverage"></a>
@@ -175,8 +176,8 @@ make help    # every target
 
 The test suite runs `publish-badge.sh` against a local bare repository, so it needs `git`. The CI
 also runs the action on this repository to publish its own badge, and checks the generator with the
-system Python 3.10 of Ubuntu 22.04. CI lints and scans with MegaLinter, at the same linter
-versions as the local hooks; see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#quality-gates).
+system Python 3.10 of Ubuntu 22.04. CI lints and scans with MegaLinter and a daily security scan;
+see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#quality-gates).
 
 AI agents follow [AGENTS.md](AGENTS.md), with rules and skills under [`.agents/`](.agents/README.md).
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.

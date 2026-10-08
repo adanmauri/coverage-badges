@@ -14,21 +14,22 @@ changed, and for a merge to `main` to check everything.
 - **Everything on every pull request:** simplest, and the noise above.
 - **Only what changed, everywhere:** fastest, but nothing ever looks at the whole repository, so
   findings that span files are never seen.
-- **What changed on pull requests, everything on `main` and on a schedule:** focused pull
-  requests, and full runs where nobody is waiting.
+- **What changed on pull requests, everything on `main`:** focused pull requests, and a full run
+  on every merge.
 
 ## Decision
 
-What changed on pull requests; everything on push to `main` and on the weekly scheduled run.
+What changed on pull requests; everything on push to `main`. The daily `security.yaml` scan is
+not affected: it always scans the whole repository.
 
 - **MegaLinter** gets `VALIDATE_ALL_CODEBASE: false` on pull requests and lints the files that
   differ from the merge base with `main` (`git diff origin/main...`). The checkout fetches the full
   history, because without the merge base MegaLinter falls back to a diff that also lists what
   landed on `main` since the branch started.
 - A pull request that changes a file that decides what the linters report (`.mega-linter.yml`,
-  `.pre-commit-config.yaml`, `pyproject.toml`, `.flake8`, `.cspell.json`, `lychee.toml`,
-  `code-quality.yaml`)
-  lints everything. Otherwise a stricter rule would pass its own pull request, which lints only the
+  `.pre-commit-config.yaml`, `pyproject.toml`, `.flake8`, `.cspell.json`, `.markdownlint.json`,
+  `.yamllint.yml`, `.secretlintrc.json`, `.jscpd.json`, `lychee.toml`, `code-quality.yaml`) lints
+  everything. Otherwise a stricter rule would pass its own pull request, which lints only the
   config file, and fail `main`.
 - MegaLinter's project-mode linters (Trivy, Grype, OSV-Scanner, Syft, Semgrep, betterleaks,
   secretlint, trufflehog, checkov, jscpd, ls-lint) always scan the whole repository; MegaLinter

@@ -24,7 +24,6 @@ Do not change a badge URL form without re-verifying it (see [Verification](#veri
 | Code style and tooling                                   | [`.agents/rules/coding-standards.md`](.agents/rules/coding-standards.md)   |
 | Pending work                                             | [`TODO.md`](TODO.md)                                                       |
 | How agent assets are organized                           | [`.agents/README.md`](.agents/README.md)                                   |
-| Lessons from past sessions                               | [`docs/RETRO-LOG.md`](docs/RETRO-LOG.md)                                   |
 
 ## Layout
 
@@ -46,7 +45,6 @@ tooling/                    repo scripts (agent pointer sync, commit-msg hook), 
 3. **Open the PR** with `write-pr` (body) and `make-pr` (mechanics).
 4. **Record decisions:** a change that reverses or extends an ADR comes with a new one, from
    [`docs/adr/template.md`](docs/adr/template.md); rules cite the ADR instead of repeating it.
-5. **Close the loop:** run `retro` after a substantive session.
 
 ## Before you finish
 
@@ -55,7 +53,9 @@ tooling/                    repo scripts (agent pointer sync, commit-msg hook), 
 - A change to parsing adds a fixture or a case in `tests/test_coverage_report.py`; a change to
   publishing adds a case in `tests/test_publish_badge.py`.
 - README, `action.yml` descriptions and this file agree with the change.
-- CI also runs MegaLinter (`.github/workflows/code-quality.yaml`), which `make check` does not.
+- CI also runs the scanners that have no local hook (vulnerabilities, verified secrets, links,
+  JSON schemas) through MegaLinter (`.github/workflows/code-quality.yaml`); check its result on
+  the pull request.
 
 ## Verification
 
@@ -88,4 +88,3 @@ They cannot prove a badge **renders**. When a change touches publishing or badge
 | `create-commit` | Commit a scoped change with a Conventional Commit message |
 | `write-pr`      | Fill the PR template into `pr-body.tmp`                   |
 | `make-pr`       | Push and open the PR against `main`                       |
-| `retro`         | Capture lessons and improve this workspace                |

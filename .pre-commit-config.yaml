@@ -1,12 +1,17 @@
 # Local checks: the commit hook and `make lint` run this file. Install the hooks once with
-# `make setup`. CI runs MegaLinter (.github/workflows/code-quality.yaml) with the same linters at
-# the same versions, so a commit that passes locally does not fail there (docs/adr/0007):
-# - Python linters run from uv.lock, pinned in pyproject.toml.
-# - actionlint, shellcheck and zizmor keep the rev of the version in the MegaLinter image.
-# check-linter-versions fails when either side drifts. Bump the other revs with
-# `pre-commit autoupdate` (pick releases at least two weeks old).
+# `make setup`; pre-commit installs the Go and Node.js runtimes the hooks need if they are missing.
+# CI runs MegaLinter (.github/workflows/code-quality.yaml) with the same linters and settings
+# (docs/adr/0007):
+# - Python linters run from uv.lock, updated like any development dependency.
+# - Node.js and Go linters pin the image's version in additional_dependencies, and betterleaks,
+#   actionlint, shellcheck and zizmor keep it as their rev; check-linter-versions fails when they
+#   drift.
+# The scanners that need the network or a vulnerability database run only in CI. Bump the other
+# revs with `pre-commit autoupdate` (pick releases at least two weeks old).
 
 default_install_hook_types: [pre-commit, commit-msg]
+# Hooks check staged files; only no-tool-attribution, which says so, reads the commit message.
+default_stages: [pre-commit]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -22,10 +27,10 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: detect-private-key
 
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.30.1
+  - repo: https://github.com/betterleaks/betterleaks
+    rev: v1.7.3
     hooks:
-      - id: gitleaks
+      - id: betterleaks
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.12.2
@@ -58,8 +63,7 @@ repos:
         require_serial: true
       - id: isort
         name: isort
-        # Its own resolution: pylint, in the lint group, requires an older isort (pyproject.toml).
-        entry: uv run --locked --isolated --no-default-groups --group isort isort --filter-files
+        entry: uv run --locked isort --filter-files
         language: system
         types_or: [python, pyi]
         require_serial: true
@@ -99,13 +103,75 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
+      - id: yamllint
+        name: yamllint
+        entry: uv run --locked yamllint --format standard -c .yamllint.yml
+        language: system
+        types: [yaml]
+        exclude: ^tests/fixtures/
+      - id: shfmt
+        name: shfmt
+        entry: shfmt -w
+        language: golang
+        additional_dependencies: [mvdan.cc/sh/v3/cmd/shfmt@v3.13.1]
+        types: [shell]
+      - id: prettier
+        name: prettier (JSON and YAML)
+        entry: prettier --write
+        language: node
+        additional_dependencies: [prettier@3.9.6]
+        types_or: [json, yaml]
+        exclude: ^tests/fixtures/
+      - id: jsonlint
+        name: jsonlint
+        entry: jsonlint --quiet
+        language: node
+        additional_dependencies: ["@prantlf/jsonlint@17.0.1"]
+        types: [json]
+        exclude: ^tests/fixtures/
+      - id: markdownlint
+        name: markdownlint
+        entry: markdownlint -c .markdownlint.json
+        language: node
+        additional_dependencies: [markdownlint-cli@0.49.1]
+        types: [markdown]
+      - id: markdown-table-formatter
+        name: markdown-table-formatter
+        entry: markdown-table-formatter
+        language: node
+        additional_dependencies: [markdown-table-formatter@1.7.0]
+        types: [markdown]
+      - id: cspell
+        name: cspell
+        entry: cspell --no-progress --no-summary --no-must-find-files --show-context
+        language: node
+        additional_dependencies: [cspell@10.1.1]
+        types: [text]
+        exclude: ^tests/fixtures/
+      - id: secretlint
+        name: secretlint
+        entry: secretlint --secretlintrc .secretlintrc.json
+        language: node
+        additional_dependencies:
+          - secretlint@13.0.5
+          - "@secretlint/secretlint-rule-preset-recommend@13.0.5"
+        types: [text]
+        # secretlint skips its own config, and fails when that leaves it nothing to check.
+        exclude: ^\.secretlintrc\.json$
+      - id: jscpd
+        name: jscpd (copied code)
+        entry: jscpd --config .jscpd.json .
+        language: node
+        additional_dependencies: [jscpd@5.0.16]
+        types: [text]
+        pass_filenames: false
       - id: check-linter-versions
         name: linter versions match the MegaLinter image
         # Reads the image's Dockerfile from GitHub, so it runs only when a version can change.
         entry: uv run --no-project tooling/check_linter_versions.py
         language: system
         pass_filenames: false
-        files: ^(pyproject\.toml|\.pre-commit-config\.yaml|\.github/workflows/code-quality\.yaml|tooling/check_linter_versions\.py)$
+        files: ^(\.pre-commit-config\.yaml|\.github/workflows/code-quality\.yaml|tooling/check_linter_versions\.py)$
       - id: check-agents
         name: agent pointers in sync with .agents/
         entry: uv run --no-project tooling/sync_agents.py --check

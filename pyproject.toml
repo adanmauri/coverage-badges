@@ -11,32 +11,22 @@ dependencies = []
 
 [dependency-groups]
 test = ["pytest", "pytest-cov"]
-# The versions bundled in the MegaLinter image CI runs (.github/workflows/code-quality.yaml), so a
-# file that passes the local hooks passes CI. Bump them with MegaLinter, never on their own:
-# tooling/check_linter_versions.py fails when they differ (docs/adr/0007).
 lint = [
-    "bandit==1.9.4",
-    "black==26.5.1",
-    "flake8==7.3.0",
-    "mypy==1.19.1",
-    "pylint==4.0.7",
-    "pyright==1.1.413",
-    "ruff==0.16.5",
+    "bandit",
+    "black",
+    "flake8",
+    "isort",
+    "mypy",
+    "pylint",
+    "pyright",
+    "ruff",
+    "yamllint",
 ]
-# MegaLinter installs every linter in its own venv, so it ships isort 9 next to a pylint that
-# requires isort<9. Here isort gets a group of its own, resolved apart from lint (see conflicts).
-isort = ["isort==9.0.1"]
 dev = [{ include-group = "test" }, { include-group = "lint" }]
 
 [tool.uv]
 # Not an installable package: the action runs the sources from its checkout.
 package = false
-conflicts = [[{ group = "lint" }, { group = "isort" }]]
-
-[tool.ruff]
-# tooling/ runs on the development Python (.python-version), not on the action's 3.10 floor, so
-# tomllib is in its standard library.
-per-file-target-version = { "tooling/**" = "py314" }
 
 [tool.black]
 line-length = 100

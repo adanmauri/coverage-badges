@@ -2,21 +2,10 @@ version = 1
 revision = 3
 requires-python = ">=3.10"
 resolution-markers = [
-    "python_full_version >= '3.12' and extra != 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint'",
-    "python_full_version == '3.11.*' and extra != 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint'",
-    "python_full_version < '3.11' and extra != 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint'",
-    "extra != 'group-15-coverage-badges-dev' and extra == 'group-15-coverage-badges-isort' and extra != 'group-15-coverage-badges-lint'",
-    "python_full_version >= '3.12' and extra != 'group-15-coverage-badges-isort' and extra != 'group-15-coverage-badges-lint'",
-    "python_full_version == '3.11.*' and extra != 'group-15-coverage-badges-isort' and extra != 'group-15-coverage-badges-lint'",
-    "python_full_version < '3.11' and extra != 'group-15-coverage-badges-isort' and extra != 'group-15-coverage-badges-lint'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
+    "python_full_version < '3.11'",
 ]
-conflicts = [[
-    { package = "coverage-badges", group = "isort" },
-    { package = "coverage-badges", group = "lint" },
-], [
-    { package = "coverage-badges", group = "dev" },
-    { package = "coverage-badges", group = "isort" },
-]]
 
 [[package]]
 name = "astroid"
@@ -38,8 +27,8 @@ dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
     { name = "pyyaml" },
     { name = "rich" },
-    { name = "stevedore", version = "5.8.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'group-15-coverage-badges-dev') or (python_full_version < '3.11' and extra != 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-dev' and extra == 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint')" },
-    { name = "stevedore", version = "5.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'group-15-coverage-badges-dev') or (python_full_version >= '3.11' and extra != 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-dev' and extra == 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint')" },
+    { name = "stevedore", version = "5.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "stevedore", version = "5.9.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/aa/c3/0cb80dfe0f3076e5da7e4c5ad8e57bac6ac357ff4a6406205501cade4965/bandit-1.9.4.tar.gz", hash = "sha256:b589e5de2afe70bd4d53fa0c1da6199f4085af666fde00e8a034f152a52cd628", size = 4242677, upload-time = "2026-02-25T06:44:15.503Z" }
 wheels = [
@@ -238,7 +227,7 @@ wheels = [
 
 [package.optional-dependencies]
 toml = [
-    { name = "tomli", marker = "python_full_version <= '3.11' or (extra == 'group-15-coverage-badges-dev' and extra == 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint')" },
+    { name = "tomli", marker = "python_full_version <= '3.11'" },
 ]
 
 [[package]]
@@ -251,24 +240,25 @@ dev = [
     { name = "bandit" },
     { name = "black" },
     { name = "flake8" },
+    { name = "isort" },
     { name = "mypy" },
     { name = "pylint" },
     { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
-]
-isort = [
-    { name = "isort", version = "9.0.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "yamllint" },
 ]
 lint = [
     { name = "bandit" },
     { name = "black" },
     { name = "flake8" },
+    { name = "isort" },
     { name = "mypy" },
     { name = "pylint" },
     { name = "pyright" },
     { name = "ruff" },
+    { name = "yamllint" },
 ]
 test = [
     { name = "pytest" },
@@ -279,25 +269,28 @@ test = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "bandit", specifier = "==1.9.4" },
-    { name = "black", specifier = "==26.5.1" },
-    { name = "flake8", specifier = "==7.3.0" },
-    { name = "mypy", specifier = "==1.19.1" },
-    { name = "pylint", specifier = "==4.0.7" },
-    { name = "pyright", specifier = "==1.1.413" },
+    { name = "bandit" },
+    { name = "black" },
+    { name = "flake8" },
+    { name = "isort" },
+    { name = "mypy" },
+    { name = "pylint" },
+    { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-cov" },
-    { name = "ruff", specifier = "==0.16.5" },
+    { name = "ruff" },
+    { name = "yamllint" },
 ]
-isort = [{ name = "isort", specifier = "==9.0.1" }]
 lint = [
-    { name = "bandit", specifier = "==1.9.4" },
-    { name = "black", specifier = "==26.5.1" },
-    { name = "flake8", specifier = "==7.3.0" },
-    { name = "mypy", specifier = "==1.19.1" },
-    { name = "pylint", specifier = "==4.0.7" },
-    { name = "pyright", specifier = "==1.1.413" },
-    { name = "ruff", specifier = "==0.16.5" },
+    { name = "bandit" },
+    { name = "black" },
+    { name = "flake8" },
+    { name = "isort" },
+    { name = "mypy" },
+    { name = "pylint" },
+    { name = "pyright" },
+    { name = "ruff" },
+    { name = "yamllint" },
 ]
 test = [
     { name = "pytest" },
@@ -318,7 +311,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.11' or (python_full_version < '3.13' and extra == 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-dev' and extra == 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint')" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -346,20 +339,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/01/e1/2069291243c926a2ff1cd706c7f3eeb9b62144bf60f77c9fb9ff2fb26bd3/iniconfig-2.3.1.tar.gz", hash = "sha256:67f4b9c50da0dedf52af349e7749a80a9057a5031199791b906c3bb3ae878960", size = 21209, upload-time = "2026-10-06T22:48:38.076Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/56/43/4ca9e49d27a1fcf6bece6f6aec0ea46bb9112489b93d4b688fb415457bdb/iniconfig-2.3.1-py3-none-any.whl", hash = "sha256:9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7", size = 7552, upload-time = "2026-10-06T22:48:36.959Z" },
-]
-
-[[package]]
-name = "isort"
-version = "7.0.0"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.12'",
-    "python_full_version == '3.11.*'",
-    "python_full_version < '3.11'",
-]
-sdist = { url = "https://files.pythonhosted.org/packages/63/53/4f3c058e3bace40282876f9b553343376ee687f3c35a525dc79dbd450f88/isort-7.0.0.tar.gz", hash = "sha256:5513527951aadb3ac4292a41a16cbc50dd1642432f5e8c20057d414bdafb4187", size = 805049, upload-time = "2025-10-11T13:30:59.107Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7f/ed/e3705d6d02b4f7aea715a353c8ce193efd0b5db13e204df895d38734c244/isort-7.0.0-py3-none-any.whl", hash = "sha256:1bcabac8bc3c36c7fb7b98a76c8abb18e0f841a3ba81decac7691008592499c1", size = 94672, upload-time = "2025-10-11T13:30:57.665Z" },
 ]
 
 [[package]]
@@ -698,21 +677,21 @@ wheels = [
 
 [[package]]
 name = "pylint"
-version = "4.0.7"
+version = "4.0.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astroid" },
     { name = "colorama", marker = "sys_platform == 'win32'" },
     { name = "dill" },
-    { name = "isort", version = "7.0.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "isort" },
     { name = "mccabe" },
     { name = "platformdirs" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "tomlkit" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/de/92/98dace02f2d11b88160354c53944f77ea7327aa78bce1c75971e7aaa4347/pylint-4.0.7.tar.gz", hash = "sha256:9b2d1d15791c84b77a4fe2aafe8f0d9570717e2dea06d53b19c105cf60275a52", size = 1594770, upload-time = "2026-08-09T19:13:23.289Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e0/5e/d5ec2c861010cf8577a3e5baaf2405fdf1004f1657d9245c4efb006c1dfd/pylint-4.0.9.tar.gz", hash = "sha256:6f1305780229ae720e89b8aff2b3ff857cbb268fbab98c8b586960267667ad34", size = 1604187, upload-time = "2026-09-23T15:26:43.144Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e0/b0/3a8040e53df6c5c1e04b0e23ed53fdbeb64f333723a334d313fba2f581ce/pylint-4.0.7-py3-none-any.whl", hash = "sha256:be4a3111557a614411ed1fc89347ce4a8e1013a59e1f33d11485227a02e3304d", size = 539710, upload-time = "2026-08-09T19:13:21.228Z" },
+    { url = "https://files.pythonhosted.org/packages/66/46/12e94ae1f9db89152223bdb17920b12c79e94ac51e19dce1da9fb63627b0/pylint-4.0.9-py3-none-any.whl", hash = "sha256:c4ba5bbaf1e70ecf05f08cd7d6091ea04824b79a2b2d9f5b10dc25fc34cb1124", size = 542068, upload-time = "2026-09-23T15:26:41.626Z" },
 ]
 
 [[package]]
@@ -733,13 +712,13 @@ name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-15-coverage-badges-dev' and extra == 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint')" },
-    { name = "exceptiongroup", marker = "python_full_version < '3.11' or (extra == 'group-15-coverage-badges-dev' and extra == 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint')" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
     { name = "pygments" },
-    { name = "tomli", marker = "python_full_version < '3.11' or (extra == 'group-15-coverage-badges-dev' and extra == 'group-15-coverage-badges-isort') or (extra == 'group-15-coverage-badges-isort' and extra == 'group-15-coverage-badges-lint')" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz", hash = "sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313", size = 1636369, upload-time = "2026-06-19T10:58:32.857Z" }
 wheels = [
@@ -1014,4 +993,17 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f6/cc/6253133b5bb138fc3306cebfbda2c520f545d36b5be2c7255cc528bb45d6/typing_extensions-4.16.0.tar.gz", hash = "sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5", size = 113555, upload-time = "2026-07-02T08:40:05.92Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl", hash = "sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8", size = 45571, upload-time = "2026-07-02T08:40:04.659Z" },
+]
+
+[[package]]
+name = "yamllint"
+version = "1.38.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pathspec" },
+    { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/28/a0/8fc2d68e132cf918f18273fdc8a1b8432b60d75ac12fdae4b0ef5c9d2e8d/yamllint-1.38.0.tar.gz", hash = "sha256:09e5f29531daab93366bb061e76019d5e91691ef0a40328f04c927387d1d364d", size = 142446, upload-time = "2026-01-13T07:47:53.276Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/05/92/aed08e68de6e6a3d7c2328ce7388072cd6affc26e2917197430b646aed02/yamllint-1.38.0-py3-none-any.whl", hash = "sha256:fc394a5b3be980a4062607b8fdddc0843f4fa394152b6da21722f5d59013c220", size = 68940, upload-time = "2026-01-13T07:47:51.343Z" },
 ]

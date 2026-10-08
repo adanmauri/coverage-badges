@@ -11,19 +11,9 @@ updates:
     cooldown:
       default-days: 14
     open-pull-requests-limit: 10
-    # The linters follow the MegaLinter image and move only when it does (docs/adr/0007).
-    ignore:
-      - dependency-name: "bandit"
-      - dependency-name: "black"
-      - dependency-name: "flake8"
-      - dependency-name: "isort"
-      - dependency-name: "mypy"
-      - dependency-name: "pylint"
-      - dependency-name: "pyright"
-      - dependency-name: "ruff"
 
   # Actions are pinned to a commit; Dependabot moves the SHA and its version comment together.
-  # A MegaLinter bump fails check_linter_versions.py until the lint pins in pyproject.toml and
+  # A MegaLinter bump fails check_linter_versions.py until the hook versions in
   # .pre-commit-config.yaml match the new image.
   - package-ecosystem: "github-actions"
     directory: "/"

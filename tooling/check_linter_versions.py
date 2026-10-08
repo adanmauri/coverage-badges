@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Fail when a local linter version differs from the one in the MegaLinter image CI runs.
+"""Fail when a pre-commit hook's linter version differs from the one in the MegaLinter image.
 
-CI lints with the linters bundled in the MegaLinter image that code-quality.yaml pins by commit;
-the local hooks lint with the versions in pyproject.toml (Python linters, through uv.lock) and
-.pre-commit-config.yaml (the rest). When the two drift, a file can pass locally and fail in CI.
-This reads the image's Dockerfile at the pinned commit and compares every linter that runs in
-both places (docs/adr/0007).
+CI lints with the linters bundled in the MegaLinter image that code-quality.yaml pins by commit.
+The non-Python hooks in .pre-commit-config.yaml pin a version of their own (a hook repository's
+rev, or the Node.js and Go packages a local hook installs), and that version is the image's, so a
+file that passes the hook passes the same linter in CI. This reads the image's Dockerfile at the
+pinned commit and compares them (docs/adr/0007). The Python linters run from uv.lock and are not
+compared.
 
 Usage:
     uv run --no-project tooling/check_linter_versions.py
@@ -17,14 +18,12 @@ from __future__ import annotations
 
 import re
 import sys
-import tomllib
 import urllib.error
 import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKFLOW = ROOT / ".github" / "workflows" / "code-quality.yaml"
-PYPROJECT = ROOT / "pyproject.toml"
 PRE_COMMIT = ROOT / ".pre-commit-config.yaml"
 
 DOCKERFILE_URL = (
@@ -33,32 +32,39 @@ DOCKERFILE_URL = (
 
 MEGALINTER_RE = re.compile(r"uses: oxsecurity/megalinter/flavors/python@([0-9a-f]{40})\b")
 ARG_RE = re.compile(r"^ARG ([A-Z0-9_]+)=(\S+)$", re.MULTILINE)
-PIN_RE = re.compile(r"^([A-Za-z0-9_.-]+)==(\S+)$")
 HOOK_REPO_RE = re.compile(r"^\s*- repo: (\S+)\n\s+rev: (\S+)$", re.MULTILINE)
-
-# Python package pinned in pyproject.toml -> Dockerfile ARG holding the image's version.
-PACKAGES = {
-    "bandit": "PIP_BANDIT_VERSION",
-    "black": "PIP_BLACK_VERSION",
-    "flake8": "PIP_FLAKE8_VERSION",
-    "isort": "PIP_ISORT_VERSION",
-    "mypy": "PIP_MYPY_VERSION",
-    "pylint": "PIP_PYLINT_VERSION",
-    "pyright": "NPM_PYRIGHT_VERSION",
-    "ruff": "PIP_RUFF_VERSION",
-}
+DEPENDENCIES_RE = re.compile(r"^(\s*)additional_dependencies:(.*)$")
+# The image's ARG values carry the base image of a tool, or its Alpine package revision.
+IMAGE_SUFFIX_RE = re.compile(r"-(alpine|r\d+)$")
 
 # pre-commit hook repository -> Dockerfile ARG holding the image's version.
 HOOK_REPOS = {
+    "https://github.com/betterleaks/betterleaks": "REPOSITORY_BETTERLEAKS_VERSION",
     "https://github.com/rhysd/actionlint": "ACTION_ACTIONLINT_VERSION",
     "https://github.com/shellcheck-py/shellcheck-py": "BASH_SHELLCHECK_VERSION",
     "https://github.com/zizmorcore/zizmor-pre-commit": "CARGO_ZIZMOR_VERSION",
 }
 
+# Node.js or Go package a local hook installs (additional_dependencies) -> Dockerfile ARG.
+HOOK_DEPENDENCIES = {
+    "@prantlf/jsonlint": "NPM_PRANTLF_JSONLINT_VERSION",
+    "@secretlint/secretlint-rule-preset-recommend": (
+        "NPM_SECRETLINT_SECRETLINT_RULE_PRESET_RECOMMEND_VERSION"
+    ),
+    "cspell": "NPM_CSPELL_VERSION",
+    "jscpd": "NPM_JSCPD_VERSION",
+    "markdown-table-formatter": "NPM_MARKDOWN_TABLE_FORMATTER_VERSION",
+    "markdownlint-cli": "NPM_MARKDOWNLINT_CLI_VERSION",
+    "mvdan.cc/sh/v3/cmd/shfmt": "BASH_SHFMT_VERSION",
+    "prettier": "NPM_PRETTIER_VERSION",
+    "secretlint": "NPM_SECRETLINT_VERSION",
+}
+
 
 def same_version(local: str, image: str) -> bool:
-    """Compare ignoring a `v` prefix; a wrapper may add a fourth part (shellcheck-py 0.11.0.1)."""
-    local, image = local.removeprefix("v"), image.removeprefix("v")
+    """Compare ignoring a `v` prefix and the image's suffix (`-alpine`, `-r1`); a wrapper may add
+    a fourth part (shellcheck-py 0.11.0.1)."""
+    local, image = local.removeprefix("v"), IMAGE_SUFFIX_RE.sub("", image.removeprefix("v"))
     return local == image or local.startswith(image + ".")
 
 
@@ -84,21 +90,33 @@ def image_versions(ref: str) -> dict[str, str]:
     return versions
 
 
-def pinned_packages() -> dict[str, str]:
-    """`name==version` requirements across the dependency groups of pyproject.toml."""
-    groups = tomllib.loads(PYPROJECT.read_text(encoding="utf-8"))["dependency-groups"]
-    pins: dict[str, str] = {}
-    for requirements in groups.values():
-        for requirement in requirements:
-            match = PIN_RE.match(requirement) if isinstance(requirement, str) else None
-            if match:
-                pins[match.group(1).lower()] = match.group(2)
-    return pins
-
-
 def hook_revs() -> dict[str, str]:
     """The rev of every hook repository in .pre-commit-config.yaml."""
     return dict(HOOK_REPO_RE.findall(PRE_COMMIT.read_text(encoding="utf-8")))
+
+
+def hook_dependencies() -> dict[str, str]:
+    """`name@version` entries of every additional_dependencies list, inline or one per line."""
+    pins: dict[str, str] = {}
+    lines = PRE_COMMIT.read_text(encoding="utf-8").splitlines()
+    for index, line in enumerate(lines):
+        match = DEPENDENCIES_RE.match(line)
+        if not match:
+            continue
+        indent, inline = match.groups()
+        if inline.strip():
+            items = inline.strip().strip("[]").split(",")
+        else:
+            items = []
+            for item in lines[index + 1 :]:
+                if not item.startswith(indent + " ") or not item.strip().startswith("- "):
+                    break
+                items.append(item.strip().removeprefix("- "))
+        for item in items:
+            name, _, version = item.strip().strip("\"'").rpartition("@")
+            if name:
+                pins[name] = version
+    return pins
 
 
 def compare(label: str, source: str, local: str | None, arg: str, image: dict[str, str]) -> str:
@@ -116,13 +134,13 @@ def main() -> int:
     """Print every difference and return 1 if there is any."""
     ref = megalinter_ref()
     image = image_versions(ref)
-    pins, revs = pinned_packages(), hook_revs()
+    revs, dependencies = hook_revs(), hook_dependencies()
     errors = [
-        compare(package, "pyproject.toml", pins.get(package), arg, image)
-        for package, arg in PACKAGES.items()
-    ] + [
         compare(repo.rsplit("/", 1)[1], ".pre-commit-config.yaml", revs.get(repo), arg, image)
         for repo, arg in HOOK_REPOS.items()
+    ] + [
+        compare(name, ".pre-commit-config.yaml", dependencies.get(name), arg, image)
+        for name, arg in HOOK_DEPENDENCIES.items()
     ]
     errors = [error for error in errors if error]
     if errors:

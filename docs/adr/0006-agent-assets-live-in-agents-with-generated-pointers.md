@@ -28,9 +28,8 @@ like them.
   `.github/skills/`, `.github/instructions/`, `.cursor/rules/`. Pointers carry frontmatter and a
   link, never instructions, and are committed so a fresh clone works without a build step.
   `make check-agents`, also a pre-commit hook, fails on drift.
-- The skills are the lightweight subset of the other repositories: `create-commit`, `write-pr`,
-  `make-pr` and `retro`, without tickets or a Definition of Done. Lessons go to
-  [`docs/RETRO-LOG.md`](../RETRO-LOG.md).
+- The skills are the lightweight subset of the other repositories: `create-commit`, `write-pr`
+  and `make-pr`, without tickets or a Definition of Done.
 - No tool is credited in commits, PRs or docs; a commit-msg hook (`tooling/check_commit_msg.py`)
   rejects attribution lines.
 

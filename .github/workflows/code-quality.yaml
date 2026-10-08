@@ -8,9 +8,6 @@ on:
   pull_request:
     branches:
       - main
-  schedule:
-    # New advisories reach dependencies nobody changed (Trivy, Grype, OSV-Scanner).
-    - cron: "0 6 * * 1"
 
 permissions: {}
 
@@ -46,9 +43,8 @@ jobs:
           # Files that change what the linters report. A pull request touching one lints
           # everything, or a stricter rule would pass the pull request and fail main.
           LINT_SETTINGS: >-
-            ^(\.mega-linter\.yml|\.pre-commit-config\.yaml|pyproject\.toml|\.flake8|\.cspell\.json|lychee\.toml|\.github/workflows/code-quality\.yaml)$
-        # Pull requests lint what they change; main and the weekly run lint everything
-        # (docs/adr/0008).
+            ^(\.mega-linter\.yml|\.pre-commit-config\.yaml|pyproject\.toml|\.flake8|\.cspell\.json|\.markdownlint\.json|\.yamllint\.yml|\.secretlintrc\.json|\.jscpd\.json|lychee\.toml|\.github/workflows/code-quality\.yaml)$
+        # Pull requests lint what they change; main lints everything (docs/adr/0008).
         run: |
           all=true
           if [ "$EVENT_NAME" = pull_request ] &&

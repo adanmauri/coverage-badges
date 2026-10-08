@@ -34,23 +34,24 @@ tool runs where is in [`docs/DEVELOPMENT.md`](../../docs/DEVELOPMENT.md#quality-
 
 - pytest under `tests/`, files `test_*.py`, one class per unit under test.
 - Every public function has a test, failure paths included.
-- Sample reports go in `tests/fixtures/` and describe the same 75% project, so a parser bug shows
-  up as a different number.
+- `tests/fixtures/` holds one sample report per format, and all of them describe the same
+  project: 8 lines, 6 of them covered. Every parser must return 75.0 for its fixture, so any other
+  number points at a parser bug. A new format or edge case keeps that total.
 - Tests that run git isolate themselves from the developer's git configuration
   (`GIT_CONFIG_GLOBAL=/dev/null`), see `tests/test_publish_badge.py`.
 
 ## Dependencies: [ADR-0004](../../docs/adr/0004-uv-is-the-development-toolchain.md)
 
 - **uv** for everything: `uv sync`, `uv run`, `uv add --group <test|lint> <package>`. NEVER call
-  `pip` or create a virtualenv by hand. Test tools are unpinned in `pyproject.toml` and pinned in
-  `uv.lock`, which is committed; CI installs with `--locked`.
-- Linters are pinned to the MegaLinter image's versions and move only with it
-  ([ADR-0007](../../docs/adr/0007-linter-versions-follow-the-megalinter-image.md)). NEVER bump one
-  on its own; `make check-linter-versions` fails if you do.
+  `pip` or create a virtualenv by hand. Development tools are unpinned in `pyproject.toml` and
+  pinned in `uv.lock`, which is committed; CI installs with `--locked`.
+- The non-Python hooks in `.pre-commit-config.yaml` pin the MegaLinter image's version and move
+  only with it ([ADR-0007](../../docs/adr/0007-non-python-linter-versions-follow-the-megalinter-image.md)).
+  NEVER bump one on its own; `make check-linter-versions` fails if you do.
 - The action itself has no runtime dependencies (`dependencies = []`), and adding one needs
   approval.
 
-## Workflows: [ADR-0009](../../docs/adr/0009-actions-are-pinned-to-a-commit-and-security-scans-run-in-megalinter.md)
+## Workflows: [ADR-0009](../../docs/adr/0009-actions-are-pinned-to-a-commit.md)
 
 - Every `uses:` is pinned to a full commit SHA with the version in a comment
   (`@<sha> # v5.1.0`). `persist-credentials: false` on every checkout whose job does not push.
