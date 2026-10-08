@@ -1,0 +1,6 @@
+# Link checker settings, read by lychee in MegaLinter (SPELL_LYCHEE).
+# https://lychee.cli.rs/guides/config/
+
+# This repository's own badge exists only once the tests on main have published it, so a pull
+# request that adds or moves it cannot pass a link check.
+exclude = ['^https://github\.com/adanmauri/coverage-badges/raw/badges/']

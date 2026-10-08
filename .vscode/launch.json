@@ -8,11 +8,7 @@
       "module": "src.generate_badge",
       "console": "integratedTerminal",
       "justMyCode": true,
-      "args": [
-        "85.5",
-        "-o",
-        "test-badge.svg"
-      ]
+      "args": ["85.5", "-o", "test-badge.svg"]
     },
     {
       "name": "Generate Badge (Report)",

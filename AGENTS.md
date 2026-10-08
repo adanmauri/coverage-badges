@@ -15,16 +15,16 @@ Do not change a badge URL form without re-verifying it (see [Verification](#veri
 
 ## Read before working
 
-| Concern | Source |
-| ------- | ------ |
-| What the action does, inputs, outputs, supported reports | [`README.md`](README.md) |
-| Setup, commands, which check runs where, conventions | [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) |
-| Decisions and their rationale | [`docs/adr/`](docs/adr/README.md) |
-| Hard constraints on the action code | [`.agents/rules/action-guardrails.md`](.agents/rules/action-guardrails.md) |
-| Code style and tooling | [`.agents/rules/coding-standards.md`](.agents/rules/coding-standards.md) |
-| Pending work | [`TODO.md`](TODO.md) |
-| How agent assets are organized | [`.agents/README.md`](.agents/README.md) |
-| Lessons from past sessions | [`docs/RETRO-LOG.md`](docs/RETRO-LOG.md) |
+| Concern                                                  | Source                                                                     |
+|----------------------------------------------------------|----------------------------------------------------------------------------|
+| What the action does, inputs, outputs, supported reports | [`README.md`](README.md)                                                   |
+| Setup, commands, which check runs where, conventions     | [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)                               |
+| Decisions and their rationale                            | [`docs/adr/`](docs/adr/README.md)                                          |
+| Hard constraints on the action code                      | [`.agents/rules/action-guardrails.md`](.agents/rules/action-guardrails.md) |
+| Code style and tooling                                   | [`.agents/rules/coding-standards.md`](.agents/rules/coding-standards.md)   |
+| Pending work                                             | [`TODO.md`](TODO.md)                                                       |
+| How agent assets are organized                           | [`.agents/README.md`](.agents/README.md)                                   |
+| Lessons from past sessions                               | [`docs/RETRO-LOG.md`](docs/RETRO-LOG.md)                                   |
 
 ## Layout
 
@@ -83,9 +83,9 @@ They cannot prove a badge **renders**. When a change touches publishing or badge
 
 ## Skills
 
-| Skill | Use it to |
-| ----- | --------- |
+| Skill           | Use it to                                                 |
+|-----------------|-----------------------------------------------------------|
 | `create-commit` | Commit a scoped change with a Conventional Commit message |
-| `write-pr` | Fill the PR template into `pr-body.tmp` |
-| `make-pr` | Push and open the PR against `main` |
-| `retro` | Capture lessons and improve this workspace |
+| `write-pr`      | Fill the PR template into `pr-body.tmp`                   |
+| `make-pr`       | Push and open the PR against `main`                       |
+| `retro`         | Capture lessons and improve this workspace                |

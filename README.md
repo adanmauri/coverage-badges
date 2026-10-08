@@ -37,10 +37,10 @@ not render in the README of a private repository**: the browser has no session o
 We tested every URL form in a private repository README, viewed by a logged-in user with access:
 
 | Where the badge is served from                                               | Desktop web | GitHub mobile app |
-| ---------------------------------------------------------------------------- | :---------: | :---------------: |
-| `raw.githubusercontent.com/...` (and shields.io endpoints that read from it) |     ❌      |        ❌         |
-| `github.com/OWNER/REPO/raw/BRANCH/...` on a dedicated branch (`branch` mode) |     ✅      |        ❌         |
-| Relative path on the same branch as the README (`commit` mode)               |     ✅      |        ✅         |
+|------------------------------------------------------------------------------|:-----------:|:-----------------:|
+| `raw.githubusercontent.com/...` (and shields.io endpoints that read from it) |     no      |        no         |
+| `github.com/OWNER/REPO/raw/BRANCH/...` on a dedicated branch (`branch` mode) |     yes     |        no         |
+| Relative path on the same branch as the README (`commit` mode)               |     yes     |        yes        |
 
 This action publishes the badge in a way that renders, and prints the exact Markdown to use.
 
@@ -74,10 +74,10 @@ still reads the report and sets the `coverage` output, so you can use it in late
 
 ## Modes
 
-| Mode               | Badge location                    | README snippet                                     | Trade-off                                                    |
-| ------------------ | --------------------------------- | -------------------------------------------------- | ------------------------------------------------------------ |
-| `branch` (default) | Orphan branch `badges`            | `![Coverage](https://github.com/OWNER/REPO/raw/badges/coverage.svg)` | Works with a protected default branch. Not shown in the mobile app. |
-| `commit`           | Default branch, next to the README | `![Coverage](coverage.svg)`                       | Shown everywhere. Needs `github-actions[bot]` to be able to push to the default branch. |
+| Mode               | Badge location                     | README snippet                                                       | Trade-off                                                                               |
+|--------------------|------------------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| `branch` (default) | Orphan branch `badges`             | `![Coverage](https://github.com/OWNER/REPO/raw/badges/coverage.svg)` | Works with a protected default branch. Not shown in the mobile app.                     |
+| `commit`           | Default branch, next to the README | `![Coverage](coverage.svg)`                                          | Shown everywhere. Needs `github-actions[bot]` to be able to push to the default branch. |
 
 ```yaml
 - uses: adanmauri/coverage-badges@v1
@@ -91,15 +91,15 @@ still reads the report and sets the `coverage` output, so you can use it in late
 
 The format is detected from the report content. Set `format` to skip detection.
 
-| Tool                         | Command                                                     | Format        |
-| ---------------------------- | ----------------------------------------------------------- | ------------- |
-| pytest-cov / coverage.py     | `pytest --cov --cov-report=xml`                             | `cobertura`   |
-| coverage.py                  | `coverage json`                                             | `coverage-py` |
-| Jest / Vitest (Istanbul)     | `--coverage --coverageReporters=json-summary` (or `lcov`)   | `istanbul`    |
-| Go                           | `go test -coverprofile=coverage.out ./...`                  | `go`          |
-| JaCoCo (Gradle / Maven)      | `jacocoTestReport.xml` / `jacoco.xml`                       | `jacoco`      |
-| .NET (coverlet)              | `dotnet test --collect:"XPlat Code Coverage"`               | `cobertura`   |
-| Rust (cargo-llvm-cov)        | `cargo llvm-cov --lcov --output-path lcov.info`             | `lcov`        |
+| Tool                     | Command                                                   | Format        |
+|--------------------------|-----------------------------------------------------------|---------------|
+| pytest-cov / coverage.py | `pytest --cov --cov-report=xml`                           | `cobertura`   |
+| coverage.py              | `coverage json`                                           | `coverage-py` |
+| Jest / Vitest (Istanbul) | `--coverage --coverageReporters=json-summary` (or `lcov`) | `istanbul`    |
+| Go                       | `go test -coverprofile=coverage.out ./...`                | `go`          |
+| JaCoCo (Gradle / Maven)  | `jacocoTestReport.xml` / `jacoco.xml`                     | `jacoco`      |
+| .NET (coverlet)          | `dotnet test --collect:"XPlat Code Coverage"`             | `cobertura`   |
+| Rust (cargo-llvm-cov)    | `cargo llvm-cov --lcov --output-path lcov.info`           | `lcov`        |
 
 The badge shows line coverage (statement coverage for Go, and the coverage.py total, which includes
 branches when branch coverage is enabled). The value is truncated to one decimal, so 99.96% is shown
@@ -107,20 +107,20 @@ as 99.9% and never rounded up to 100%.
 
 ## Inputs and Outputs
 
-| Input    | Default        | Description                                                                 |
-| -------- | -------------- | --------------------------------------------------------------------------- |
-| `report` | (required)     | Path to the coverage report.                                                |
-| `format` | `auto`         | `auto`, `cobertura`, `jacoco`, `lcov`, `go`, `coverage-py` or `istanbul`.   |
-| `mode`   | `branch`       | `branch` or `commit`. See [Modes](#modes).                                  |
-| `branch` | `badges`       | Branch that stores the badge in `branch` mode.                              |
-| `path`   | `coverage.svg` | Path of the badge file inside the target branch.                            |
-| `label`  | `Coverage`     | Text on the left side of the badge.                                         |
+| Input    | Default        | Description                                                               |
+|----------|----------------|---------------------------------------------------------------------------|
+| `report` | (required)     | Path to the coverage report.                                              |
+| `format` | `auto`         | `auto`, `cobertura`, `jacoco`, `lcov`, `go`, `coverage-py` or `istanbul`. |
+| `mode`   | `branch`       | `branch` or `commit`. See [Modes](#modes).                                |
+| `branch` | `badges`       | Branch that stores the badge in `branch` mode.                            |
+| `path`   | `coverage.svg` | Path of the badge file inside the target branch.                          |
+| `label`  | `Coverage`     | Text on the left side of the badge.                                       |
 
-| Output      | Description                                                                 |
-| ----------- | --------------------------------------------------------------------------- |
-| `coverage`  | Coverage percentage shown in the badge, with one decimal (e.g. `87.5`).     |
+| Output      | Description                                                                  |
+|-------------|------------------------------------------------------------------------------|
+| `coverage`  | Coverage percentage shown in the badge, with one decimal (e.g. `87.5`).      |
 | `published` | `true` when a new badge was pushed, `false` when unchanged or not published. |
-| `markdown`  | Markdown snippet to show the badge in the README.                          |
+| `markdown`  | Markdown snippet to show the badge in the README.                            |
 
 ## How It Works
 

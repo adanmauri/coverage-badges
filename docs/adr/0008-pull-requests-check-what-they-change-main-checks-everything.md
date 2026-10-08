@@ -26,7 +26,8 @@ What changed on pull requests; everything on push to `main` and on the weekly sc
   history, because without the merge base MegaLinter falls back to a diff that also lists what
   landed on `main` since the branch started.
 - A pull request that changes a file that decides what the linters report (`.mega-linter.yml`,
-  `.pre-commit-config.yaml`, `pyproject.toml`, `.flake8`, `.cspell.json`, `code-quality.yaml`)
+  `.pre-commit-config.yaml`, `pyproject.toml`, `.flake8`, `.cspell.json`, `lychee.toml`,
+  `code-quality.yaml`)
   lints everything. Otherwise a stricter rule would pass its own pull request, which lints only the
   config file, and fail `main`.
 - MegaLinter's project-mode linters (Trivy, Grype, OSV-Scanner, Syft, Semgrep, betterleaks,

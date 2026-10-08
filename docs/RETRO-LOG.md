@@ -18,6 +18,11 @@ One entry per session retrospective (see the `retro` skill), newest first.
     the pre-commands now target each linter's venv.
   - MegaLinter used its default config files instead of `pyproject.toml` for four Python linters,
     and versions apart from the lock → ADR-0007, `tooling/check_linter_versions.py`.
+  - The first run showed formatters (black and isort included) as non-blocking:
+    `FORMATTERS_DISABLE_ERRORS` defaults to true, which the docs here contradicted. It also failed
+    on spelling, a link to the badge that only exists after merge, a pytest advisory and zizmor
+    calling the GitHub API without a token → `FORMATTERS_DISABLE_ERRORS: false`, zizmor offline
+    as locally, `lychee.toml`, pytest 9.1.1.
 - **Follow-ups:** the first MegaLinter v10.1.0 run on GitHub, and running its image by digest, are
   in `TODO.md`.
 

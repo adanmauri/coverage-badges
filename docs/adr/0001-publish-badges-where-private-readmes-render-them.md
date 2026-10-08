@@ -17,12 +17,12 @@ itself as only "supposedly compatible" with private repositories.
 On 2026-10-07 a throwaway private repository tested every URL form, with the SVG on an orphan
 branch and a different SVG on the README's branch, viewed by a logged-in user with access:
 
-| URL form | Desktop web | GitHub mobile app (Android) |
-| -------- | :---------: | :-------------------------: |
-| `raw.githubusercontent.com/OWNER/REPO/BRANCH/...` | no | no |
-| `github.com/OWNER/REPO/raw/BRANCH/...` and `blob/BRANCH/...?raw=true` | yes | no |
-| Relative `../../raw/BRANCH/...` from a root README | yes | no |
-| Relative path on the README's own branch | yes | yes |
+| URL form                                                              | Desktop web | GitHub mobile app (Android) |
+|-----------------------------------------------------------------------|:-----------:|:---------------------------:|
+| `raw.githubusercontent.com/OWNER/REPO/BRANCH/...`                     |     no      |             no              |
+| `github.com/OWNER/REPO/raw/BRANCH/...` and `blob/BRANCH/...?raw=true` |     yes     |             no              |
+| Relative `../../raw/BRANCH/...` from a root README                    |     yes     |             no              |
+| Relative path on the README's own branch                              |     yes     |             yes             |
 
 Anonymous requests to every form returned 404, as expected for a private repository. The browser
 loads `github.com/.../raw/...` with the viewer's session, while `raw.githubusercontent.com` gets no

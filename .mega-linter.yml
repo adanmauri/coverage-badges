@@ -13,6 +13,13 @@ DEFAULT_BRANCH: main
 # Every linter the Python flavor ships runs and blocks; those that find no files switch
 # themselves off. A linter that does not fit this repository goes under DISABLE_LINTERS with the
 # reason, instead of running without blocking: a finding that never fails CI is never fixed.
+# Formatters (black, isort, prettier, markdownlint...) do not block by default; here they do, as
+# black and isort do in the local hooks.
+FORMATTERS_DISABLE_ERRORS: false
+
+# Offline, as the local hook: the online audits call the GitHub API, and MegaLinter hides the
+# token from linters.
+ACTION_ZIZMOR_ARGUMENTS: --offline
 
 # The Python linters read the settings the local hooks read. Without these, MegaLinter falls back
 # to its own default files when the repository has none by the name it looks for (a .pylintrc,

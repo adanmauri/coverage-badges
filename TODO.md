@@ -9,9 +9,6 @@
 
 - Check badge rendering in the GitHub iOS app (only Android was tested).
 - Run the action on a macOS runner (only Ubuntu 22.04 and 24.04 were tested).
-- First CI run of MegaLinter v10.1.0: check that the pre-commands give mypy, pylint and pyright
-  pytest, and disable, with the reason in `.mega-linter.yml`, any linter with no local hook that
-  does not fit this repository.
 
 ## Hardening
 

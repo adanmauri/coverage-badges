@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file MD041 -->
 ## Summary
 
 <!-- 2-4 bullets, impact on action users first: new input, changed output, changed badge URL. -->
