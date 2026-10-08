@@ -1,18 +1,31 @@
 # Coverage Badges
 
 <p align="center">
-    <em>A GitHub Action that keeps a coverage badge up to date in private repositories, with no third-party service.</em>
+  <em>A GitHub Action that keeps a coverage badge up to date in private repositories, with no third-party service.</em>
 </p>
 
+<!-- Stack: what the action runs on, then the tools this repository is developed with. -->
 <p align="center">
-    <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/code-quality.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/code-quality.yaml/badge.svg" alt="Code Quality"></a>
-    <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml/badge.svg" alt="Tests & Coverage"></a>
-    <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml/badge.svg" alt="Security"></a>
+  <img src="https://img.shields.io/badge/GitHub%20Action-composite-2088FF.svg?logo=githubactions&logoColor=white" alt="GitHub Action: composite">
+  <img src="https://img.shields.io/badge/python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/runtime%20dependencies-none-brightgreen.svg" alt="Runtime dependencies: none">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <br>
+  <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv"></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
+  <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black"></a>
+  <a href="https://github.com/pre-commit/pre-commit"><img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" alt="pre-commit"></a>
 </p>
+
+<!-- Quality: the workflows on main, and this repository's own coverage badge, published by the action. -->
 <p align="center">
-    <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml"><img src="https://github.com/adanmauri/coverage-badges/raw/badges/coverage.svg" alt="Coverage"></a>
-    <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml/badge.svg" alt="Todo to Issue"></a>
-    <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot Updates"></a>
+  <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/code-quality.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/code-quality.yaml/badge.svg?branch=main" alt="Code Quality"></a>
+  <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml/badge.svg?branch=main" alt="Tests & Coverage"></a>
+  <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml/badge.svg?branch=main" alt="Security"></a>
+  <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml"><img src="https://github.com/adanmauri/coverage-badges/raw/badges/coverage.svg" alt="Coverage"></a>
+  <br>
+  <a href="https://github.com/adanmauri/coverage-badges/network/updates"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot Updates"></a>
+  <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml/badge.svg?branch=main" alt="TODO to Issue"></a>
 </p>
 
 ## Table of Contents
