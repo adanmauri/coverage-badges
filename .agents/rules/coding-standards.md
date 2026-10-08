@@ -9,7 +9,7 @@ Binding checklist. The tools enforce most of it: `make check` locally, MegaLinte
 ## Python
 
 - MUST run on **Python 3.10+** with the standard library only in `src/` (see the
-  [action guardrails](action-guardrails.md)). Development uses Python 3.14 with Pipenv.
+  [action guardrails](action-guardrails.md)). Development uses the Python in `.python-version`.
 - Built-in generics and unions: `dict[str, int]`, `list[str] | None`. Import from `typing` only
   what has no built-in form (`Any`, `cast`).
 - Black and isort (Black profile), line length 100; Ruff, Flake8, Pylint, mypy and Pyright clean.
@@ -39,5 +39,8 @@ Binding checklist. The tools enforce most of it: `make check` locally, MegaLinte
 
 ## Dependencies
 
-- Pipenv: runtime packages pinned (`==`), dev packages `*`. The action itself has no runtime
-  dependencies, and adding one needs approval.
+- **uv** for everything: `uv sync`, `uv run`, `uv add --group <test|lint> <package>`. NEVER call
+  `pip` or create a virtualenv by hand. Dev tools are unpinned in `pyproject.toml` and pinned in
+  `uv.lock`, which is committed; CI installs with `--locked`.
+- The action itself has no runtime dependencies (`dependencies = []`), and adding one needs
+  approval.

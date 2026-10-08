@@ -70,7 +70,7 @@ mentions `.claude/` or `CLAUDE.md` passes. If the hook is not installed, run it 
 file before committing:
 
 ```bash
-python3 tooling/check_commit_msg.py <message-file>
+uv run --no-project tooling/check_commit_msg.py <message-file>
 ```
 
 ## Safety Rules

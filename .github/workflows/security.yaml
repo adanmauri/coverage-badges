@@ -87,25 +87,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Cache pip packages
-        uses: actions/cache@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
-          path: .pip-cache
-          key: ${{ runner.os }}-pip-${{ hashFiles('Pipfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          enable-cache: true
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.14"
-
-      - name: Install pipenv and dependencies
-        env:
-          PIP_CACHE_DIR: .pip-cache
-        run: |
-          pip install --upgrade pip pipenv --root-user-action=ignore --cache-dir="$PIP_CACHE_DIR"
-          pipenv install --system --dev --deploy
+      - name: Install dependencies
+        run: uv sync --locked --no-default-groups --group lint
 
       - name: Run Bandit security scan
         id: bandit-scan
@@ -115,8 +103,8 @@ jobs:
             echo "⚠️  Warning: src/ directory not found. Skipping Bandit scan."
             exit 0
           fi
-          bandit -r src/ --severity-level medium --confidence-level medium -c pyproject.toml -f json -o bandit-report.json
-          bandit -r src/ --severity-level medium --confidence-level medium -c pyproject.toml -f txt -o bandit-report.txt
+          uv run --no-sync bandit -r src/ --severity-level medium --confidence-level medium -c pyproject.toml -f json -o bandit-report.json
+          uv run --no-sync bandit -r src/ --severity-level medium --confidence-level medium -c pyproject.toml -f txt -o bandit-report.txt
 
       - name: Display Bandit results
         if: always()

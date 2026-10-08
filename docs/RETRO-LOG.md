@@ -21,6 +21,6 @@ One entry per session retrospective (see the `retro` skill), newest first.
     standards.
   - `.cursorrules` belonged to another project and the README promised pre-commit hooks that did
     not exist → `.agents/rules/`, `.pre-commit-config.yaml` and `make check`.
-- **Follow-ups:** tests run through `uv` while dependencies are still declared in Pipenv; moving
-  the project to uv, like the owner's other repositories, is a separate decision. The iOS rendering
-  check and the `v1` release are in `TODO.md`.
+- **Follow-ups:** tests ran through `uv` while dependencies were declared in Pipenv; the owner
+  asked to move everything to uv, done right after. The iOS rendering check and the `v1` release
+  are in `TODO.md`.

@@ -80,11 +80,7 @@ target/
 profile_default/
 ipython_config.py
 
-# pyenv
-.python-version
-
-# pipenv
-Pipfile.lock
+# uv: .python-version and uv.lock are committed.
 
 # PEP 582
 __pypackages__/

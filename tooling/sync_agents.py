@@ -6,8 +6,8 @@ Rules and context (.agents/{rules,context}/{stem}.md) get an always-on pointer f
 Cursor and GitHub Copilot. Pointers carry only frontmatter and a link, never logic.
 
 Usage:
-    python3 tooling/sync_agents.py          # write pointers, prune orphaned ones
-    python3 tooling/sync_agents.py --check  # write nothing, exit 1 on drift
+    uv run --no-project tooling/sync_agents.py          # write pointers, prune orphaned ones
+    uv run --no-project tooling/sync_agents.py --check  # write nothing, exit 1 on drift
 
 Stdlib only. See .agents/README.md.
 """

@@ -1,5 +1,5 @@
 {
-  "python.defaultInterpreterPath": "pipenv",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
   "python.terminal.activateEnvironment": true,
   "python.terminal.activateEnvInCurrentTerminal": true,
   "python.terminal.executeInFileDir": false,
@@ -51,7 +51,7 @@
       "args": [
         "-NoExit",
         "-Command",
-        "cd ${workspaceFolder}; if (Test-Path .venv) { .venv\\Scripts\\Activate.ps1 } else { pipenv shell }"
+        "cd ${workspaceFolder}; if (-not (Test-Path .venv)) { uv sync }; .venv\\Scripts\\Activate.ps1"
       ]
     }
   },

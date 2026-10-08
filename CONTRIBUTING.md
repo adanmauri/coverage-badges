@@ -6,11 +6,10 @@ Thank you for your interest in contributing to Coverage Badges! This document pr
 
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/adanmauri/coverage-badges.git`
-3. Set up the development environment:
+3. Set up the development environment (needs [uv](https://docs.astral.sh/uv/)):
 
    ```bash
-   pipenv install --dev
-   pipenv shell
+   make setup   # uv sync --locked, then installs the git hooks
    ```
 
 ## Reporting Issues
@@ -94,7 +93,7 @@ This project follows strict style guidelines to ensure consistency. The binding 
 ### Python Version
 
 - **Python 3.10+ syntax is required**
-- The project uses Python 3.14 (as specified in `Pipfile`)
+- Development uses the Python in `.python-version` (3.14); uv installs it when needed
 
 ### Type Hints
 
@@ -240,20 +239,21 @@ def test_badge_generator_get_color_high_coverage():
 
 Run tests with:
 ```bash
-pytest
+make test          # uv run pytest, with coverage
+make test-compat   # the same tests on Python 3.10
 ```
 
 ## Dependency Management
 
-- **Use Pipenv for dependency management**
-- **Production dependencies (`[packages]`)**: Always use fixed versions (e.g., `pandas = "==2.3.3"`)
-- **Development dependencies (`[dev-packages]`)**: Use `*` for flexible versions (e.g., `pytest = "*"`)
-- This ensures reproducible production builds while allowing flexibility for development tools
+- **Use uv for everything**: `uv sync`, `uv run`, `uv add`. Do not call `pip` directly.
+- **The action has no runtime dependencies** (`dependencies = []` in `pyproject.toml`). It runs
+  on the runner's own Python with the standard library only; adding one needs approval.
+- **Development tools** live in the `test` and `lint` dependency groups, unpinned in
+  `pyproject.toml` and pinned in `uv.lock`.
 
-When adding new dependencies:
-1. Add to `Pipfile` with appropriate version constraints
-2. Run `pipenv install` or `pipenv install --dev` as needed
-3. Commit both `Pipfile` and `Pipfile.lock`
+When adding a development dependency:
+1. `uv add --group test <package>` (or `--group lint`)
+2. Commit both `pyproject.toml` and `uv.lock`
 
 ## Code Review Process
 

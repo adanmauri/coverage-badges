@@ -1,3 +1,32 @@
+[project]
+name = "coverage-badges"
+version = "1.0.0"
+description = "GitHub Action that keeps a coverage badge up to date in private repositories."
+readme = "README.md"
+license = "MIT"
+# The action runs on the runner's own python3, so the code supports 3.10+; development uses
+# the version in .python-version.
+requires-python = ">=3.10"
+dependencies = []
+
+[dependency-groups]
+test = ["pytest", "pytest-cov"]
+lint = [
+    "bandit",
+    "black",
+    "flake8",
+    "isort",
+    "mypy",
+    "pylint",
+    "pyright",
+    "ruff",
+]
+dev = [{ include-group = "test" }, { include-group = "lint" }]
+
+[tool.uv]
+# Not an installable package: the action runs the sources from its checkout.
+package = false
+
 [tool.black]
 line-length = 100
 target-version = ["py310"]

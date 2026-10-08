@@ -138,14 +138,15 @@ and green from 80%.
 
 ## Command Line
 
-The badge generator also works locally (Python 3.10+, no dependencies):
+The badge generator also works locally. It has no dependencies, so any Python 3.10+ runs it; with
+uv:
 
 ```bash
 # From a coverage report
-python -m src.generate_badge --report coverage.xml -o coverage.svg
+uv run python -m src.generate_badge --report coverage.xml -o coverage.svg
 
 # From a fixed value, with a custom label
-python -m src.generate_badge 87.5 -l tests -o tests-coverage.svg
+uv run python -m src.generate_badge 87.5 -l tests -o tests-coverage.svg
 ```
 
 It prints the coverage value shown in the badge to stdout.
@@ -167,7 +168,7 @@ coverage-badges/
 ```
 
 ```bash
-make setup   # once per clone: installs the pre-commit and commit-msg hooks (needs uv)
+make setup   # once per clone: uv sync, then the pre-commit and commit-msg hooks (needs uv)
 make check   # hooks over the whole repo, then the tests on Python 3.14 and 3.10
 make help    # every target
 ```

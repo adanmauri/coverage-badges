@@ -10,7 +10,8 @@ keep it safe to drop into any job. Rationale lives in the [README](../../README.
 ## Runtime
 
 - MUST run on the runner's own `python3`, **3.10 or newer**, with the **standard library only**.
-  No `pip install`, no `actions/setup-python` inside the action. Python 3.12+ syntax (for
+  No `pip install`, no `uv`, no `actions/setup-python` inside the action: uv is the development
+  toolchain, not a requirement for the people who use the action. Python 3.12+ syntax (for
   example, reusing the same quote type inside an f-string) is a `SyntaxError` on 3.10.
 - MUST run on GitHub-hosted Ubuntu and macOS runners with `bash`, `git` and `python3`.
 

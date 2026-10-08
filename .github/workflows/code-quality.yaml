@@ -26,28 +26,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Cache pip packages
-        uses: actions/cache@v4
-        with:
-          path: .pip-cache
-          key: ${{ runner.os }}-pip-${{ hashFiles('Pipfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
       - name: Run MegaLinter
         uses: oxsecurity/megalinter/flavors/python@v9.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MEGALINTER_CACHE: "true"
-          PIP_CACHE_DIR: /github/workspace/.pip-cache
           PYTHON_ISORT_CONFIG_FILE: pyproject.toml
           DISABLE_LINTERS: PYTHON_BANDIT
           PRE_COMMANDS: >
             [
               {
-                "command": "pip install --upgrade pip pipenv --root-user-action=ignore --cache-dir=$PIP_CACHE_DIR"
+                "command": "pip install --root-user-action=ignore uv"
               },
               {
-                "command": "pipenv install --system --dev --deploy"
+                "command": "uv export --frozen --no-hashes --no-emit-project --all-groups --output-file /tmp/requirements-dev.txt"
+              },
+              {
+                "command": "uv pip install --system --break-system-packages -r /tmp/requirements-dev.txt"
               }
             ]

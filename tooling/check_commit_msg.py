@@ -6,7 +6,7 @@ Only attribution patterns are matched, so a message that mentions `.claude/`, `C
 CSS cursor is fine; a `Co-Authored-By:` trailer naming an assistant is not.
 
 Usage (wired by pre-commit at the commit-msg stage):
-    python3 tooling/check_commit_msg.py <commit-message-file>
+    uv run --no-project tooling/check_commit_msg.py <commit-message-file>
 
 Stdlib only.
 """

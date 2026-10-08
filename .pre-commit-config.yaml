@@ -1,6 +1,6 @@
 # Local checks: the commit hook and `make lint` run this file. Install the hooks once with
 # `make setup`. CI runs MegaLinter (.github/workflows/code-quality.yaml) for the Python linters.
-# Python tool revs match Pipfile.lock. Bump revs with `pre-commit autoupdate` (pick releases at
+# Python tool revs match uv.lock. Bump revs with `pre-commit autoupdate` (pick releases at
 # least two weeks old).
 
 default_install_hook_types: [pre-commit, commit-msg]
@@ -23,6 +23,11 @@ repos:
     rev: v8.30.1
     hooks:
       - id: gitleaks
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.12.2
+    hooks:
+      - id: uv-lock
 
   - repo: https://github.com/psf/black-pre-commit-mirror
     rev: 25.11.0
@@ -66,12 +71,12 @@ repos:
     hooks:
       - id: check-agents
         name: agent pointers in sync with .agents/
-        entry: python3 tooling/sync_agents.py --check
+        entry: uv run --no-project tooling/sync_agents.py --check
         language: system
         pass_filenames: false
         files: ^(\.agents/|\.claude/skills/|\.github/(skills|instructions)/|\.cursor/rules/|tooling/sync_agents\.py$)
       - id: no-tool-attribution
         name: no tool attribution in the commit message
-        entry: python3 tooling/check_commit_msg.py
+        entry: uv run --no-project tooling/check_commit_msg.py
         language: system
         stages: [commit-msg]
