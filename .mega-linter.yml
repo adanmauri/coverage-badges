@@ -1,0 +1,35 @@
+# MegaLinter configuration for CI (.github/workflows/code-quality.yaml), and the config a local
+# `mega-linter-runner --flavor python` picks up. Why MegaLinter runs in CI next to the local
+# pre-commit hooks: docs/adr/0005-quality-gates-pre-commit-locally-megalinter-in-ci.md.
+# https://megalinter.io/latest/config-file/
+
+# Report, never push fixes from CI.
+APPLY_FIXES: none
+
+# Every linter the Python flavor ships runs, and those that find no files switch themselves off.
+# No ENABLE_ERRORS_LINTERS yet: every active linter blocks the job. Once a run on main shows which
+# linters are at zero, list those here so a linter added by a new image version reports first
+# instead of turning CI red overnight (TODO.md).
+
+# Bandit runs in .github/workflows/security.yaml with its own report in the job summary.
+DISABLE_LINTERS:
+  - PYTHON_BANDIT
+
+# isort reads its settings (Black profile, line length 100) from pyproject.toml.
+PYTHON_ISORT_CONFIG_FILE: pyproject.toml
+
+# tests/fixtures/ holds coverage reports in the exact shape the tools write them, so formatting
+# rules do not apply. The others are trees nobody writes by hand.
+FILTER_REGEX_EXCLUDE: '(^tests/fixtures/|/\.venv/|^\.venv/|megalinter-reports/)'
+
+# Python linters need the project's dev dependencies to resolve imports (pytest in tests/). The
+# container has pip but no uv, so install uv, export the lock (docs/adr/0004) and install from it.
+PRE_COMMANDS:
+  - command: pip install --root-user-action=ignore uv
+    cwd: workspace
+  - command: >-
+      uv export --frozen --no-hashes --no-emit-project --all-groups
+      --output-file /tmp/requirements-dev.txt
+    cwd: workspace
+  - command: uv pip install --system --break-system-packages -r /tmp/requirements-dev.txt
+    cwd: workspace
