@@ -84,6 +84,9 @@ Then add the badge to your README. The job summary prints the snippet for your r
 The badge is published only from the default branch. On pull requests and other branches the action
 still reads the report and sets the `coverage` output, so you can use it in later steps.
 
+`@v1` follows every `v1.x.y` release. To never get a change you did not choose, pin `@v1.0.0`:
+releases here are immutable, so that tag always points at the same code.
+
 ## Modes
 
 | Mode               | Badge location                     | README snippet                                                       | Trade-off                                                                               |
@@ -143,7 +146,9 @@ as 99.9% and never rounded up to 100%.
   not modified.
 - Skips the commit when the badge did not change, and retries when a concurrent run pushed first.
 - Commits are authored by `github-actions[bot]` and marked `[skip ci]`.
-- Pushes with the credentials of `actions/checkout`, so the job needs `permissions: contents: write`.
+- Pushes with the credentials of `actions/checkout`, so the job needs `permissions: contents: write`,
+  and a branch protection rule or ruleset must let `github-actions[bot]` push to the target branch:
+  `badges` in `branch` mode, the default branch in `commit` mode.
 
 Badge colors follow the coverage percentage: red below 40%, yellow from 40%, yellow-green from 60%
 and green from 80%.
