@@ -42,7 +42,19 @@ tool runs where is in [`docs/DEVELOPMENT.md`](../../docs/DEVELOPMENT.md#quality-
 ## Dependencies: [ADR-0004](../../docs/adr/0004-uv-is-the-development-toolchain.md)
 
 - **uv** for everything: `uv sync`, `uv run`, `uv add --group <test|lint> <package>`. NEVER call
-  `pip` or create a virtualenv by hand. Dev tools are unpinned in `pyproject.toml` and pinned in
+  `pip` or create a virtualenv by hand. Test tools are unpinned in `pyproject.toml` and pinned in
   `uv.lock`, which is committed; CI installs with `--locked`.
+- Linters are pinned to the MegaLinter image's versions and move only with it
+  ([ADR-0007](../../docs/adr/0007-linter-versions-follow-the-megalinter-image.md)). NEVER bump one
+  on its own; `make check-linter-versions` fails if you do.
 - The action itself has no runtime dependencies (`dependencies = []`), and adding one needs
   approval.
+
+## Workflows: [ADR-0009](../../docs/adr/0009-actions-are-pinned-to-a-commit-and-security-scans-run-in-megalinter.md)
+
+- Every `uses:` is pinned to a full commit SHA with the version in a comment
+  (`@<sha> # v5.1.0`). `persist-credentials: false` on every checkout whose job does not push.
+- A tag, release or package that disappeared or moved is a signal, not housekeeping: read the
+  upstream advisories and check this repository's runs before replacing it.
+- What a tool's container ships (versions, venvs, uv) is read from its Dockerfile at the pinned
+  commit, never assumed.

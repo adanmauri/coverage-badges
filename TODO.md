@@ -9,16 +9,11 @@
 
 - Check badge rendering in the GitHub iOS app (only Android was tested).
 - Run the action on a macOS runner (only Ubuntu 22.04 and 24.04 were tested).
+- First CI run of MegaLinter v10.1.0: check that the pre-commands give mypy, pylint and pyright
+  pytest, and disable, with the reason in `.mega-linter.yml`, any linter with no local hook that
+  does not fit this repository.
 
 ## Hardening
 
-- The Trivy job in `security.yaml` fails before it starts: the `aquasecurity/trivy-action@0.28.0`
-  tag no longer exists (latest is `v0.36.0`). Pin a current release to a commit SHA.
-- After the first MegaLinter run on `main`, list the linters at zero findings under
-  `ENABLE_ERRORS_LINTERS` in `.mega-linter.yml`, so new linters report instead of failing.
-- `MEGALINTER_CACHE` in `code-quality.yaml` is not a MegaLinter setting (not in the v9.1.0
-  schema); confirm and remove it.
-
-- Fix the zizmor findings in `.github/workflows/` (actions not pinned to a commit SHA,
-  `persist-credentials` left on where the job does not push), then extend the zizmor hook in
-  `.pre-commit-config.yaml` from `action.yml` to the workflows.
+- Run the MegaLinter image by digest: the action pinned by commit still pulls
+  `ghcr.io/oxsecurity/megalinter-python:v10.1.0` by tag (docs/adr/0009).

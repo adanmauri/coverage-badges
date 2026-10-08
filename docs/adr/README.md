@@ -18,6 +18,9 @@ link anywhere in the docs. A number taken by a branch that has not merged yet go
 | [0004](0004-uv-is-the-development-toolchain.md) | uv is the development toolchain | Accepted |
 | [0005](0005-quality-gates-pre-commit-locally-megalinter-in-ci.md) | Quality gates: pre-commit locally, MegaLinter in CI | Accepted |
 | [0006](0006-agent-assets-live-in-agents-with-generated-pointers.md) | Agent assets live in `.agents/` with generated pointers | Accepted |
+| [0007](0007-linter-versions-follow-the-megalinter-image.md) | Linter versions follow the MegaLinter image | Accepted |
+| [0008](0008-pull-requests-check-what-they-change-main-checks-everything.md) | Pull requests check what they change; main checks everything | Accepted |
+| [0009](0009-actions-are-pinned-to-a-commit-and-security-scans-run-in-megalinter.md) | Actions are pinned to a commit, and security scans run in MegaLinter | Accepted |
 
 ## Reserved
 

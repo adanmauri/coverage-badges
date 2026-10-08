@@ -28,13 +28,15 @@ while MegaLinter runs them, which shows the cost of the two lists drifting.
   hook runs it on staged files; `make lint` runs it on the whole repository; `make check` adds the
   tests on Python 3.14 and 3.10. It covers file hygiene, gitleaks, the `uv-lock` check, Black,
   isort, Ruff, Flake8, mypy, Pyright, Pylint and Bandit (through `uv run`), shellcheck, actionlint,
-  zizmor on `action.yml`, agent pointer sync, docs links and the ADR index, and the commit-msg
-  check against tool attribution.
+  zizmor, agent pointer sync, docs links and the ADR index, and the commit-msg check against tool
+  attribution.
 - **In CI:** MegaLinter's Python flavor, configured in [`.mega-linter.yml`](../../.mega-linter.yml),
-  plus the jobs in `.github/workflows/`: tests and the action itself (`tests.yaml`), Trivy and
-  Bandit (`security.yaml`).
-- Every Python linter MegaLinter runs is also a local hook, so a commit that passes locally does
-  not fail there on Python code.
+  which also runs the security scans
+  ([ADR-0009](0009-actions-are-pinned-to-a-commit-and-security-scans-run-in-megalinter.md)), plus
+  the tests and the action itself (`tests.yaml`).
+- Every Python linter MegaLinter runs is also a local hook, at the same version
+  ([ADR-0007](0007-linter-versions-follow-the-megalinter-image.md)), so a commit that passes
+  locally does not fail there on Python code.
 
 [`docs/DEVELOPMENT.md`](../DEVELOPMENT.md) keeps the map of which tool runs where.
 
@@ -48,11 +50,9 @@ while MegaLinter runs them, which shows the cost of the two lists drifting.
 ### Negative / trade-offs
 
 - Two lists to keep aligned: a Python linter added to one goes into the other.
-- Tool versions differ between the two: the hooks pin the versions in `uv.lock` or their own
-  `rev`, while MegaLinter brings its own.
-- zizmor covers `action.yml` only until the existing workflow findings are fixed.
 
 ### Follow-ups
 
-- `TODO.md`: fix the zizmor findings in the workflows and extend the hook to them; replace the
-  deleted `aquasecurity/trivy-action@0.28.0` tag, which makes the Trivy job fail before it starts.
+- [ADR-0007](0007-linter-versions-follow-the-megalinter-image.md) ties the versions of the two
+  lists together; [ADR-0008](0008-pull-requests-check-what-they-change-main-checks-everything.md)
+  sets what each pull request checks.

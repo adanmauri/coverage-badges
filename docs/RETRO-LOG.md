@@ -2,6 +2,25 @@
 
 One entry per session retrospective (see the `retro` skill), newest first.
 
+## 2026-10-08: CI checks what changed, at the versions the hooks use
+
+- **Context:** reviewed the CI items left in `TODO.md` (the broken Trivy job, `MEGALINTER_CACHE`,
+  which MegaLinter linters block); the owner asked for pull requests to check only what changed
+  and for the local linters to match MegaLinter's versions.
+- **Changes:**
+  - The broken Trivy job had gone into `TODO.md` as "the tag no longer exists, pin a newer one".
+    Asked why, the tag turned out to be one of those rewritten in the March 2026 `trivy-action`
+    compromise, and this repository's run had used it inside the window → ADR-0009, and the
+    workflow rules in the coding standards (a vanished tag is a signal).
+  - ADR-0004 said MegaLinter's image had no uv, and the pre-commands installed pytest into the
+    system Python. The Dockerfile shows uv in the image and one venv per Python linter, so the
+    pre-commands could not reach mypy or pylint → the rule to read the container's Dockerfile, and
+    the pre-commands now target each linter's venv.
+  - MegaLinter used its default config files instead of `pyproject.toml` for four Python linters,
+    and versions apart from the lock → ADR-0007, `tooling/check_linter_versions.py`.
+- **Follow-ups:** the first MegaLinter v10.1.0 run on GitHub, and running its image by digest, are
+  in `TODO.md`.
+
 ## 2026-10-07: pivot to a GitHub Action, and an agent harness to go with it
 
 - **Context:** turned the collection of pre-generated badges into a GitHub Action for private

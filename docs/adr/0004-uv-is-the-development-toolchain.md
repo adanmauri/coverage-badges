@@ -24,9 +24,10 @@ uv for everything in development:
 
 - `pyproject.toml` declares the project with `dependencies = []` (see
   [ADR-0002](0002-the-action-runs-on-the-runner-python-with-the-standard-library.md)) and the
-  `test` and `lint` dependency groups; `dev` includes both and is uv's default group.
-- `uv.lock` and `.python-version` (3.14) are committed. The migration locked the same versions
-  `Pipfile.lock` had.
+  `test` and `lint` dependency groups; `dev` includes both and is uv's default group. The linters
+  are pinned to the MegaLinter image's versions, isort in a group of its own
+  ([ADR-0007](0007-linter-versions-follow-the-megalinter-image.md)).
+- `uv.lock` and `.python-version` (3.14) are committed.
 - `make` targets, the local pre-commit hooks and CI (`astral-sh/setup-uv`, `uv sync --locked`)
   call uv. The 3.10 tests run in an isolated environment (`uv run --isolated --python 3.10`), so
   the project `.venv` stays on 3.14.
@@ -44,8 +45,8 @@ uv is a development tool only: the action does not use it.
 ### Negative / trade-offs
 
 - Contributors need uv installed.
-- MegaLinter's container has no uv; its pre-commands install uv with pip and export the lock to a
-  requirements file (see [ADR-0005](0005-quality-gates-pre-commit-locally-megalinter-in-ci.md)).
+- MegaLinter does not use this environment: it brings its own linters, at the same versions, and
+  its pre-commands install the `test` group from the lock where the type checkers need pytest.
 
 ### Follow-ups
 
