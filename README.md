@@ -4,20 +4,11 @@
   <em>A GitHub Action that keeps a coverage badge up to date in private repositories, with no third-party service.</em>
 </p>
 
-<!-- Stack: what the action runs on, then the tools this repository is developed with. -->
+<!-- What the action is: its Marketplace listing, the latest release, and the Python it needs. -->
 <p align="center">
   <a href="https://github.com/marketplace/actions/coverage-badge-for-private-repos"><img src="https://img.shields.io/badge/GitHub%20Action-composite-2088FF.svg?logo=githubactions&logoColor=white" alt="GitHub Action: composite"></a>
   <a href="https://github.com/marketplace/actions/coverage-badge-for-private-repos"><img src="https://img.shields.io/github/v/release/adanmauri/coverage-badges?logo=github&logoColor=white&label=release" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python 3.10+">
-  <img src="https://img.shields.io/badge/Bash-4EAA25.svg?logo=gnubash&logoColor=white" alt="Bash">
-  <img src="https://img.shields.io/badge/Git-F05032.svg?logo=git&logoColor=white" alt="Git">
-  <img src="https://img.shields.io/badge/runtime%20dependencies-none-brightgreen.svg" alt="Runtime dependencies: none">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
-  <br>
-  <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv"></a>
-  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
-  <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black"></a>
-  <a href="https://github.com/pre-commit/pre-commit"><img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" alt="pre-commit"></a>
 </p>
 
 ---
