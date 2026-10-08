@@ -8,17 +8,6 @@ on:
   pull_request:
     branches:
       - main
-    # Pull requests that change none of these skip the tests; main always runs them, and
-    # publishes the badge (docs/adr/0008).
-    paths:
-      - "action.yml"
-      - "scripts/**"
-      - "src/**"
-      - "tests/**"
-      - "pyproject.toml"
-      - "uv.lock"
-      - ".python-version"
-      - ".github/workflows/tests.yaml"
 
 permissions: {}
 
@@ -27,7 +16,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    # Pull requests that change none of the files the tests depend on skip them; main always runs
+    # them, and publishes the badge (docs/adr/0008). The filter lives in a job, not in `paths:`,
+    # because `test` is a required check: a job skipped by its condition reports success, while a
+    # workflow that never starts leaves the check pending and blocks the merge.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      run: ${{ steps.diff.outputs.run }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Decide whether the tests run
+        id: diff
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          TESTED_FILES: >-
+            ^(action\.yml|scripts/|src/|tests/|pyproject\.toml|uv\.lock|\.python-version|\.github/workflows/tests\.yaml)
+        run: |
+          run=true
+          if [ "$EVENT_NAME" = pull_request ] &&
+            ! git diff --name-only "origin/$BASE_REF...HEAD" | grep -qE "$TESTED_FILES"; then
+            run=false
+          fi
+          echo "Run the tests: $run"
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
   test:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -57,6 +82,8 @@ jobs:
   action-compatibility:
     # Runs the badge generator with the runner's system Python (3.10 on Ubuntu 22.04),
     # the oldest interpreter the action supports, without installing anything.
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     permissions:

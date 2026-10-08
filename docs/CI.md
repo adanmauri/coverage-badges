@@ -86,15 +86,30 @@ A pull request checks what it changes; a push to `main` checks everything.
 - **Tests** run in full whenever they run, because a change in one module can break another.
   Pull requests that touch none of `action.yml`, `scripts/`, `src/`, `tests/`, `pyproject.toml`,
   `uv.lock`, `.python-version` or `tests.yaml` skip them; `main` always runs them, and publishes
-  the badge.
+  the badge. A first job, `changes`, makes that call, so the `test` check still reports (as
+  skipped, which counts as passing) instead of staying pending, as a `paths:` filter would.
 - **Locally**, the hooks check the staged files, but mypy, Pyright, Pylint and Bandit check the
   whole project whenever a Python file changes.
 
 The cost: a pull request can pass and `main` fail, on a check that spans files or on a file the
-pull request did not touch; the fix goes in the next pull request. `main` has no branch protection
-today. If a check ever becomes required, the `paths` filter leaves the tests pending on
-docs-only pull requests and blocks the merge; the filter would then move into a job that skips
-itself.
+pull request did not touch; the fix goes in the next pull request.
+
+## Merging to main
+
+A repository ruleset ("Main Branch Protection") guards `main`:
+
+- Changes reach it only through a pull request, never by a direct push, a force-push or a
+  deletion.
+- The `megalinter`, `trivy`, `bandit` and `test` checks must pass, on a branch that is up to date
+  with `main`.
+- The history stays linear: squash or rebase, no merge commits.
+- A code owner must review (`.github/CODEOWNERS` names `@adanmauri` for everything), and only
+  roles with bypass, Admin here, can update `main`. In practice the maintainer merges with
+  "Merge without waiting for requirements (bypass rules)" once the checks pass, since nobody can
+  approve their own pull request.
+
+The ruleset covers `main` only, so the action can push this repository's badge to the `badges`
+branch.
 
 ## Workflows
 

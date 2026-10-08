@@ -36,7 +36,10 @@ not affected: it always scans the whole repository.
   They are fast, and their findings are not tied to a file.
 - **Tests** run in full whenever they run: selecting tests by diff would miss a change that breaks
   a module through another one. Pull requests that touch none of the action's or the tests' files
-  skip the workflow; `main` always runs it, and publishes the badge.
+  skip them; `main` always runs them, and publishes the badge. `test` is a required check on
+  `main`, so the decision is a job (`changes`) that the tests depend on, not a `paths:` filter: a
+  job skipped by its condition reports success, a workflow that never starts leaves the check
+  pending and blocks the merge.
 - **Locally**, the hooks run on the staged files, and mypy, Pyright, Pylint and Bandit check the
   whole project whenever a Python file changes (`pass_filenames: false`).
 
@@ -52,9 +55,7 @@ not affected: it always scans the whole repository.
 - A pull request can pass and `main` fail, on a check that spans files (duplicated code, a module
   importing one that changed) or on a file the pull request did not touch. The fix goes in the next
   pull request.
-- `main` has no branch protection today. If a check ever becomes required, the `paths` filter on
-  the tests leaves it pending on docs-only pull requests and blocks the merge; the filter would
-  then move into a job that skips itself.
+- Every pull request starts the tests workflow, if only to decide to skip the tests.
 
 ### Follow-ups
 
