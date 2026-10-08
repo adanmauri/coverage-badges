@@ -24,7 +24,7 @@
   <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml/badge.svg?branch=main" alt="Security"></a>
   <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml"><img src="https://github.com/adanmauri/coverage-badges/raw/badges/coverage.svg" alt="Coverage"></a>
   <br>
-  <a href="https://github.com/adanmauri/coverage-badges/network/updates"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot Updates"></a>
+  <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot Updates"></a>
   <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml/badge.svg?branch=main" alt="TODO to Issue"></a>
 </p>
 
