@@ -4,6 +4,7 @@ This module provides a BadgeGenerator class that can generate
 coverage SVG badges with different levels and colors.
 """
 
+from html import escape
 from pathlib import Path
 
 
@@ -109,6 +110,9 @@ class BadgeGenerator:
         coverage_str = f"{coverage:.1f}%"
         start_color, end_color = self.get_color_gradient(coverage)
         dims = self._calculate_dimensions(label, coverage_str)
+        label_width = dims["label_width"]
+        message_width = dims["message_width"]
+        label = escape(label)
 
         svg = (
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{dims["total_width"]}" height="20">\n'
@@ -127,8 +131,8 @@ class BadgeGenerator:
             f'    <g font-family="&#39;DejaVu Sans&#39;,Verdana,Geneva,sans-serif" '
             f'font-size="11">\n'
             f'      <path id="label-bg" '
-            f'd="M0,3 C0,1.3431 1.3552,0 3.02702703,0 L{dims["label_width"]},0 '
-            f"L{dims["label_width"]},20 L3.02702703,20 C1.3552,20 0,18.6569 0,17 "
+            f'd="M0,3 C0,1.3431 1.3552,0 3.02702703,0 L{label_width},0 '
+            f"L{label_width},20 L3.02702703,20 C1.3552,20 0,18.6569 0,17 "
             f'L0,3 Z" fill="url(#label-fill)" fill-rule="nonzero"></path>\n'
             f'      <text fill="#010101" fill-opacity=".3">\n'
             f'        <tspan x="{dims["label_x"]}" y="15" aria-hidden="true">{label}</tspan>\n'
@@ -137,11 +141,11 @@ class BadgeGenerator:
             f'        <tspan x="{dims["label_x"]}" y="14">{label}</tspan>\n'
             f"      </text>\n"
             f"    </g>\n"
-            f'    <g transform="translate({dims["label_width"]})" '
+            f'    <g transform="translate({label_width})" '
             f'font-family="&#39;DejaVu Sans&#39;,Verdana,Geneva,sans-serif" '
             f'font-size="11">\n'
-            f'      <path d="M0 0h{dims["message_width"] - 3}C{dims["message_width"] - 1.061} 0 '
-            f'{dims["message_width"]} 1.343 {dims["message_width"]} 3v14c0 1.657-1.37 3-3.061 '
+            f'      <path d="M0 0h{message_width - 3}C{message_width - 1.061} 0 '
+            f"{message_width} 1.343 {message_width} 3v14c0 1.657-1.37 3-3.061 "
             f'3H0V0z" id="message-bg" fill="url(#message-fill)" '
             f'fill-rule="nonzero"></path>\n'
             f'      <text fill="#010101" fill-opacity=".3" aria-hidden="true">\n'

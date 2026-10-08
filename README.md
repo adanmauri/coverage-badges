@@ -1,7 +1,7 @@
 # Coverage Badges
 
 <p align="center">
-    <em>Collection of coverage SVG badges to import in README.md files of GitHub projects.</em>
+    <em>A GitHub Action that keeps a coverage badge up to date in private repositories, with no third-party service.</em>
 </p>
 
 <p align="center">
@@ -10,266 +10,177 @@
     <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/security.yaml/badge.svg" alt="Security"></a>
 </p>
 <p align="center">
-    <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml"><img src="https://raw.githubusercontent.com/adanmauri/coverage-badges/refs/heads/main/coverage.svg" alt="Coverage"></a>
+    <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/tests.yaml"><img src="https://github.com/adanmauri/coverage-badges/raw/badges/coverage.svg" alt="Coverage"></a>
     <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml/badge.svg" alt="Todo to Issue"></a>
     <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot Updates"></a>
 </p>
 
 ## Table of Contents
 
-- [Overview](#overview)
+- [Why](#why)
 - [Quick Start](#quick-start)
-- [Usage](#usage)
-- [Colors](#colors)
-- [Examples](#examples)
-- [Architecture](#architecture)
-- [Testing](#testing)
-- [Quality Assurance](#quality-assurance)
+- [Modes](#modes)
+- [Supported Reports](#supported-reports)
+- [Inputs and Outputs](#inputs-and-outputs)
+- [How It Works](#how-it-works)
+- [Command Line](#command-line)
+- [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
-- [TODO](#todo)
 
-## Overview
+## Why
 
-This repository provides static coverage SVG badges that can be directly imported into README.md files of other projects. Especially useful for private repositories where external services like shields.io cannot be used. The badges are generated with GitHub-style design, including rounded corners, gradients, and the Pytest icon.
+Coverage services and shields.io need to read your coverage data, so they do not work for private
+repositories without handing that data to a third party. Most badge actions avoid that by pushing
+the badge to the repository and linking it through `raw.githubusercontent.com`, but **that URL does
+not render in the README of a private repository**: the browser has no session on that domain.
 
-### Why Use This?
+We tested every URL form in a private repository README, viewed by a logged-in user with access:
 
-- ✅ **Private Repositories** - Works with private GitHub repositories where shields.io cannot access coverage data
-- ✅ **No External Dependencies** - Static SVG files that work without external services
-- ✅ **GitHub-style Design** - Professional appearance matching GitHub's native badges
-- ✅ **Easy Integration** - Simple URL-based import in any README.md
-- ✅ **Customizable** - Generate badges with any coverage percentage or custom labels
+| Where the badge is served from                                               | Desktop web | GitHub mobile app |
+| ---------------------------------------------------------------------------- | :---------: | :---------------: |
+| `raw.githubusercontent.com/...` (and shields.io endpoints that read from it) |     ❌      |        ❌         |
+| `github.com/OWNER/REPO/raw/BRANCH/...` on a dedicated branch (`branch` mode) |     ✅      |        ❌         |
+| Relative path on the same branch as the README (`commit` mode)               |     ✅      |        ✅         |
+
+This action publishes the badge in a way that renders, and prints the exact Markdown to use.
+
+> The mobile app was tested on Android. Badges of private repositories are only visible to users
+> with access to the repository, like everything else in it.
 
 ## Quick Start
 
-### Prerequisites
-
-- Python 3.14
-- Pipenv for dependency management
-
-### Installation
-
-```bash
-# Install all dependencies (including dev dependencies)
-pipenv install --dev
-
-# Or install only production dependencies
-pipenv install
+```yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - run: pytest --cov --cov-report=xml
+      - uses: adanmauri/coverage-badges@v1
+        with:
+          report: coverage.xml
 ```
 
-## Usage
-
-### Option 1: Use Pre-generated Badges
-
-This repository includes pre-generated badges for different coverage levels (0%, 5%, 10%, ..., 100%).
-
-To use a badge in your README.md, add:
+Then add the badge to your README. The job summary prints the snippet for your repository:
 
 ```markdown
-![Coverage](https://raw.githubusercontent.com/adanmauri/coverage-badges/main/badges/coverage-85.svg)
+![Coverage](https://github.com/OWNER/REPO/raw/badges/coverage.svg)
 ```
 
-**Note:** If you fork this repository, replace `adanmauri` with your GitHub username and `coverage-badges` with your repository name (if you renamed it). Replace `85` with the coverage percentage you need.
+The badge is published only from the default branch. On pull requests and other branches the action
+still reads the report and sets the `coverage` output, so you can use it in later steps.
 
-### Option 2: Generate a Custom Badge
+## Modes
 
-If you need a badge with a specific percentage that is not pre-generated:
+| Mode               | Badge location                    | README snippet                                     | Trade-off                                                    |
+| ------------------ | --------------------------------- | -------------------------------------------------- | ------------------------------------------------------------ |
+| `branch` (default) | Orphan branch `badges`            | `![Coverage](https://github.com/OWNER/REPO/raw/badges/coverage.svg)` | Works with a protected default branch. Not shown in the mobile app. |
+| `commit`           | Default branch, next to the README | `![Coverage](coverage.svg)`                       | Shown everywhere. Needs `github-actions[bot]` to be able to push to the default branch. |
+
+```yaml
+- uses: adanmauri/coverage-badges@v1
+  with:
+    report: coverage.xml
+    mode: commit
+    path: .github/badges/coverage.svg # README snippet: ![Coverage](.github/badges/coverage.svg)
+```
+
+## Supported Reports
+
+The format is detected from the report content. Set `format` to skip detection.
+
+| Tool                         | Command                                                     | Format        |
+| ---------------------------- | ----------------------------------------------------------- | ------------- |
+| pytest-cov / coverage.py     | `pytest --cov --cov-report=xml`                             | `cobertura`   |
+| coverage.py                  | `coverage json`                                             | `coverage-py` |
+| Jest / Vitest (Istanbul)     | `--coverage --coverageReporters=json-summary` (or `lcov`)   | `istanbul`    |
+| Go                           | `go test -coverprofile=coverage.out ./...`                  | `go`          |
+| JaCoCo (Gradle / Maven)      | `jacocoTestReport.xml` / `jacoco.xml`                       | `jacoco`      |
+| .NET (coverlet)              | `dotnet test --collect:"XPlat Code Coverage"`               | `cobertura`   |
+| Rust (cargo-llvm-cov)        | `cargo llvm-cov --lcov --output-path lcov.info`             | `lcov`        |
+
+The badge shows line coverage (statement coverage for Go, and the coverage.py total, which includes
+branches when branch coverage is enabled). The value is truncated to one decimal, so 99.96% is shown
+as 99.9% and never rounded up to 100%.
+
+## Inputs and Outputs
+
+| Input    | Default        | Description                                                                 |
+| -------- | -------------- | --------------------------------------------------------------------------- |
+| `report` | (required)     | Path to the coverage report.                                                |
+| `format` | `auto`         | `auto`, `cobertura`, `jacoco`, `lcov`, `go`, `coverage-py` or `istanbul`.   |
+| `mode`   | `branch`       | `branch` or `commit`. See [Modes](#modes).                                  |
+| `branch` | `badges`       | Branch that stores the badge in `branch` mode.                              |
+| `path`   | `coverage.svg` | Path of the badge file inside the target branch.                            |
+| `label`  | `Coverage`     | Text on the left side of the badge.                                         |
+
+| Output      | Description                                                                 |
+| ----------- | --------------------------------------------------------------------------- |
+| `coverage`  | Coverage percentage shown in the badge, with one decimal (e.g. `87.5`).     |
+| `published` | `true` when a new badge was pushed, `false` when unchanged or not published. |
+| `markdown`  | Markdown snippet to show the badge in the README.                          |
+
+## How It Works
+
+- Runs on the runner's `python3` (3.10 or newer, preinstalled on GitHub-hosted Ubuntu and macOS
+  runners) using only the standard library. Nothing is installed and no data leaves GitHub.
+- Builds the commit with git plumbing on a temporary index, so your checkout and working tree are
+  not modified.
+- Skips the commit when the badge did not change, and retries when a concurrent run pushed first.
+- Commits are authored by `github-actions[bot]` and marked `[skip ci]`.
+- Pushes with the credentials of `actions/checkout`, so the job needs `permissions: contents: write`.
+
+Badge colors follow the coverage percentage: red below 40%, yellow from 40%, yellow-green from 60%
+and green from 80%.
+
+## Command Line
+
+The badge generator also works locally (Python 3.10+, no dependencies):
 
 ```bash
-python -m src.generate_badge 87.5 -o my-badge.svg
+# From a coverage report
+python -m src.generate_badge --report coverage.xml -o coverage.svg
+
+# From a fixed value, with a custom label
+python -m src.generate_badge 87.5 -l tests -o tests-coverage.svg
 ```
 
-This will generate a badge with 87.5% coverage in the file `my-badge.svg`.
+It prints the coverage value shown in the badge to stdout.
 
-### Option 3: Customize the Label
-
-You can change the badge label:
-
-```bash
-python -m src.generate_badge 90 -l "tests" -o tests-coverage.svg
-```
-
-## Project Structure
+## Development
 
 ```text
 coverage-badges/
-├── badges/              # Generated SVG badges
-│   ├── coverage-0.svg
-│   ├── coverage-5.svg
-│   ├── ...
-│   └── coverage-100.svg
-├── src/                 # Python source code
-│   ├── __init__.py
-│   ├── badge_generator.py    # BadgeGenerator class
-│   ├── generate_badge.py     # Script to generate individual badges
-│   └── generate_all_badges.py  # Script to generate all badges
-├── tests/               # Test files
-│   ├── __init__.py
-│   └── test_badge_generator.py
-├── .vscode/             # VS Code workspace configuration
-│   ├── extensions.json  # Recommended extensions
-│   ├── settings.json    # Workspace settings
-│   └── launch.json      # Debug configurations
-├── .github/              # GitHub workflows and templates
-│   └── workflows/        # CI/CD workflows
-├── CONTRIBUTING.md       # Contribution guidelines
-├── LICENSE               # MIT License
-├── Pipfile               # Python dependencies (pipenv)
-├── pyproject.toml        # Project configuration
-└── README.md             # This file
+├── action.yml                 # Composite GitHub Action
+├── scripts/
+│   └── publish-badge.sh       # Pushes the badge to a branch without touching the checkout
+├── src/
+│   ├── badge_generator.py     # SVG generation
+│   ├── coverage_report.py     # Report parsers and format detection
+│   └── generate_badge.py      # CLI used by the action
+└── tests/
+    ├── fixtures/              # One sample report per supported format
+    └── test_*.py
 ```
-
-## Colors
-
-Badges change color according to the coverage percentage:
-
-- 🔴 **Red** (`#e05d44`): 0-39%
-- 🟡 **Yellow** (`#dfb317`): 40-59%
-- 🟢 **Yellow-green** (`#a3c51c`): 60-79%
-- 🟢 **Green** (`#4c1`): 80-100%
-
-## Examples
-
-### Basic Badge
-
-```markdown
-![Coverage](https://raw.githubusercontent.com/adanmauri/coverage-badges/main/badges/coverage-85.svg)
-```
-
-### Badge with Link
-
-```markdown
-[![Coverage](https://raw.githubusercontent.com/adanmauri/coverage-badges/main/badges/coverage-85.svg)](https://github.com/adanmauri/coverage-badges)
-```
-
-## Generate All Badges
-
-To generate all pre-made badges (0% to 100% in 5% increments):
 
 ```bash
-python -m src.generate_all_badges
-```
-
-## Architecture
-
-### Core Components
-
-1. **BadgeGenerator** - Main class for generating coverage SVG badges
-2. **Color System** - Automatic color selection based on coverage percentage
-3. **SVG Generation** - GitHub-style badges with gradients and rounded corners
-
-### BadgeGenerator Class
-
-The `BadgeGenerator` class provides methods to generate SVG badges:
-
-```python
-from src import BadgeGenerator
-
-# Initialize generator
-generator = BadgeGenerator()
-
-# Generate SVG content
-svg = generator.generate_svg(85.0, label="Coverage")
-
-# Save badge to file
-from pathlib import Path
-generator.save_badge(85.0, Path("badge.svg"), label="Coverage")
-```
-
-### Key Features
-
-- ✅ **GitHub-style Design** - Rounded corners, gradients, and professional appearance
-- ✅ **Pytest Icon** - Includes Pytest icon on the left side of badges
-- ✅ **Automatic Color Selection** - Colors change based on coverage percentage
-- ✅ **Customizable Labels** - Support for custom badge labels
-- ✅ **Type Safety** - Full type hints using Python 3.10+ syntax
-- ✅ **Static SVG Files** - No external dependencies required for display
-
-## Testing
-
-The project uses pytest for testing. Run tests from the `tests/` directory:
-
-```bash
-# Install dependencies (including pytest)
 pipenv install --dev
-
-# Run all tests
-pipenv run pytest tests/
-
-# Run tests with verbose output
-pipenv run pytest tests/ -v
-
-# Run specific test file
-pipenv run pytest tests/test_badge_generator.py -v
-
-# Run tests with coverage report
 pipenv run pytest tests/ --cov=src --cov-report=term-missing
-
-# Run tests with HTML coverage report
-pipenv run pytest tests/ --cov=src --cov-report=html
 ```
 
-## Quality Assurance
+The test suite runs `publish-badge.sh` against a local bare repository, so it needs `git`. The CI
+also runs the action on this repository to publish its own badge, and checks the generator with the
+system Python 3.10 of Ubuntu 22.04.
 
-### Code Quality
-
-- **Python 3.14** - Modern Python syntax with built-in type hints (`dict`, `list`, `| None` instead of `typing` module)
-- **Type Hints** - Full type annotations throughout the codebase using Python 3.10+ syntax
-- **Linting** - Pylint, Flake8, and Ruff for code quality checks
-- **Formatting** - Black for consistent code formatting (line length: 100)
-- **Security** - Bandit and Trivy for security vulnerability scanning
-- **Type Checking** - mypy, pyright, and ruff for static type analysis
-- **Testing** - pytest for comprehensive test coverage
-- **Documentation** - Clear, concise docstrings following project standards
-
-### CI/CD
-
-The project includes GitHub Actions workflows for:
-
-- **Code Quality** - Automated linting and formatting checks via MegaLinter
-- **Tests & Coverage** - Automated test execution with coverage reporting
-- **Security** - Security vulnerability scanning with Trivy and Bandit
-- **Todo Management** - Automatic issue creation from TODO comments
-
-### Development Tools
-
-- **Pipenv** - Dependency management
-- **Pre-commit hooks** - Automated code quality checks (via MegaLinter)
-- **VS Code integration** - Pre-configured settings, extensions, and debug configurations
-- **Cursor Rules** - Project-specific coding standards defined in `.cursorrules`
-
-#### VS Code Setup
-
-The project includes pre-configured VS Code settings in `.vscode/`:
-
-- **Recommended Extensions** (`.vscode/extensions.json`) - Automatically suggests essential extensions
-- **Workspace Settings** (`.vscode/settings.json`) - Configured for Python development with Pipenv
-- **Debug Configurations** (`.vscode/launch.json`) - Ready-to-use debug configurations for badge generation scripts
-
-### Code Standards
-
-The project follows strict coding standards defined in `.cursorrules`:
-
-- All code, comments, and documentation in English
-- Python 3.10+ syntax with modern type hints
-- Simplified docstring format (brief descriptions)
-- No emojis in logs or messages
-- Consistent code style with Black and isort
-
-## Notes
-
-- Badges are static SVG files, so you will need to update them manually when your project's coverage changes.
-- To automate the update, you can integrate the `python -m src.generate_badge` command into your CI/CD pipeline.
-- This project does not perform coverage analysis, it only generates SVG badges based on a provided value.
+Code style, linting and security checks (Black, isort, Ruff, Pylint, Flake8, mypy, Bandit, Trivy)
+run in CI through MegaLinter. See [CONTRIBUTING.md](CONTRIBUTING.md) for the coding standards.
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
-
-## TODO
-
-See [TODO.md](TODO.md) for planned features and improvements.
 
 ## License
 

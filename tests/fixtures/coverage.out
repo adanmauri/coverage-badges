@@ -1,0 +1,5 @@
+mode: set
+example.com/m/a.go:3.10,5.2 3 1
+example.com/m/a.go:7.10,9.2 2 0
+example.com/m/b.go:3.10,6.2 3 0
+example.com/m/b.go:3.10,6.2 3 1

@@ -8,45 +8,40 @@
       "module": "src.generate_badge",
       "console": "integratedTerminal",
       "justMyCode": true,
-      "args": ["85.5", "-o", "test-badge.svg", "-d", "badges"]
+      "args": [
+        "85.5",
+        "-o",
+        "test-badge.svg"
+      ]
     },
     {
-      "name": "Generate Badge (Custom)",
+      "name": "Generate Badge (Report)",
       "type": "debugpy",
       "request": "launch",
       "module": "src.generate_badge",
       "console": "integratedTerminal",
       "justMyCode": true,
       "args": [
-        "${input:coverage}",
+        "--report",
+        "${input:report}",
         "-o",
         "${input:outputFile}",
         "-l",
-        "${input:label}",
-        "-d",
-        "${input:directory}"
+        "${input:label}"
       ]
-    },
-    {
-      "name": "Generate All Badges",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "src.generate_all_badges",
-      "console": "integratedTerminal",
-      "justMyCode": true
     }
   ],
   "inputs": [
     {
-      "id": "coverage",
+      "id": "report",
       "type": "promptString",
-      "description": "Coverage percentage (0-100)",
-      "default": "85.5"
+      "description": "Coverage report path",
+      "default": "tests/fixtures/cobertura.xml"
     },
     {
       "id": "outputFile",
       "type": "promptString",
-      "description": "Output filename (e.g., badge.svg)",
+      "description": "Output file (e.g., badge.svg)",
       "default": "badge.svg"
     },
     {
@@ -54,12 +49,6 @@
       "type": "promptString",
       "description": "Badge label",
       "default": "Coverage"
-    },
-    {
-      "id": "directory",
-      "type": "promptString",
-      "description": "Output directory",
-      "default": "badges"
     }
   ]
 }

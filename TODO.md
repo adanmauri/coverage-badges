@@ -1,10 +1,10 @@
 # TODO
 
-## CI/CD Integration
+## Release
 
-Add GitHub Action workflow for automatic badge generation and update in CI/CD pipelines.
+- Tag `v1` (and a moving `v1` major tag) so `adanmauri/coverage-badges@v1` resolves.
+- Publish the action to the GitHub Marketplace.
 
-The workflow should:
-- Generate coverage badge based on test coverage results
-- Automatically commit and push the updated badge to the repository
-- Work seamlessly with existing test workflows
+## Verification
+
+- Check badge rendering in the GitHub iOS app (only Android was tested).

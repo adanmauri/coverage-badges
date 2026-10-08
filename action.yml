@@ -1,0 +1,107 @@
+name: Coverage Badge for Private Repos
+description: Generate a coverage badge from your test report and publish it so it renders in private repository READMEs, with no third-party service.
+author: adanmauri
+
+branding:
+  icon: check-circle
+  color: green
+
+inputs:
+  report:
+    description: Path to the coverage report (Cobertura XML, JaCoCo XML, LCOV, Go coverprofile, coverage.py JSON or Istanbul json-summary).
+    required: true
+  format:
+    description: Report format. One of auto, cobertura, jacoco, lcov, go, coverage-py, istanbul.
+    required: false
+    default: auto
+  mode:
+    description: >-
+      Where to publish the badge. "branch" pushes it to a dedicated branch (works with a protected
+      default branch, but the GitHub mobile app does not render it in private repos). "commit"
+      commits it to the default branch (renders everywhere, but needs push access to that branch).
+    required: false
+    default: branch
+  branch:
+    description: Branch that stores the badge when mode is "branch".
+    required: false
+    default: badges
+  path:
+    description: Path of the badge file inside the target branch.
+    required: false
+    default: coverage.svg
+  label:
+    description: Text on the left side of the badge.
+    required: false
+    default: Coverage
+
+outputs:
+  coverage:
+    description: Coverage percentage shown in the badge, with one decimal.
+    value: ${{ steps.badge.outputs.coverage }}
+  published:
+    description: '"true" when a new badge was pushed, "false" when it was unchanged or not published.'
+    value: ${{ steps.badge.outputs.published }}
+  markdown:
+    description: Markdown snippet to show the badge in the README.
+    value: ${{ steps.badge.outputs.markdown }}
+
+runs:
+  using: composite
+  steps:
+    - id: badge
+      shell: bash
+      env:
+        INPUT_REPORT: ${{ inputs.report }}
+        INPUT_FORMAT: ${{ inputs.format }}
+        INPUT_MODE: ${{ inputs.mode }}
+        INPUT_BRANCH: ${{ inputs.branch }}
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_LABEL: ${{ inputs.label }}
+        DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      run: |
+        set -euo pipefail
+
+        case "$INPUT_MODE" in
+          branch)
+            target_branch=$INPUT_BRANCH
+            badge_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/raw/$INPUT_BRANCH/$INPUT_PATH"
+            ;;
+          commit)
+            target_branch=$DEFAULT_BRANCH
+            badge_url=$INPUT_PATH
+            ;;
+          *)
+            echo "::error::Invalid mode '$INPUT_MODE'. Use 'branch' or 'commit'."
+            exit 1
+            ;;
+        esac
+
+        badge_file="$RUNNER_TEMP/coverage-badge.svg"
+        coverage=$(PYTHONPATH="$GITHUB_ACTION_PATH" python3 -m src.generate_badge \
+          --report "$INPUT_REPORT" --format "$INPUT_FORMAT" --label "$INPUT_LABEL" --output "$badge_file")
+        markdown="![$INPUT_LABEL]($badge_url)"
+        {
+          echo "coverage=$coverage"
+          echo "markdown=$markdown"
+        } >> "$GITHUB_OUTPUT"
+
+        published=false
+        if [[ -z "$DEFAULT_BRANCH" || "$GITHUB_REF" != "refs/heads/$DEFAULT_BRANCH" ]]; then
+          echo "::notice::Coverage is $coverage%. The badge is only published from the default branch."
+        else
+          status=$("$GITHUB_ACTION_PATH/scripts/publish-badge.sh" "$badge_file" "$target_branch" \
+            "$INPUT_PATH" "Update coverage badge to $coverage% [skip ci]")
+          [[ "$status" == "pushed" ]] && published=true
+          echo "Coverage is $coverage%. Badge $status on branch $target_branch."
+        fi
+        echo "published=$published" >> "$GITHUB_OUTPUT"
+
+        {
+          echo "### Coverage: $coverage%"
+          echo
+          echo "Add the badge to your README:"
+          echo
+          echo '```markdown'
+          echo "$markdown"
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"

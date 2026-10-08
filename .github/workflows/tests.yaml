@@ -18,15 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      pull-requests: write
       contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -55,34 +51,30 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pipenv run pytest tests/ --cov=src --cov-report=xml --cov-report=term-missing --cov-report=json -v
+          pipenv run pytest tests/ --cov=src --cov-report=xml --cov-report=term-missing -v
 
-      - name: Extract coverage percentage
-        id: coverage
-        run: |
-          COVERAGE=$(python -c "import json; data = json.load(open('coverage.json')); print(f\"{data['totals']['percent_covered']:.2f}\")")
-          ROUNDED=$(python -c "coverage = float('$COVERAGE'); rounded = round(coverage / 5) * 5; rounded = int(min(100, max(0, rounded))); print(rounded)")
-          echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
-          echo "rounded=$ROUNDED" >> "$GITHUB_OUTPUT"
-          echo "Coverage: $COVERAGE% (rounded to $ROUNDED% for badge)"
+      - name: Publish coverage badge
+        uses: ./
+        with:
+          report: coverage.xml
 
-      - name: Update README with coverage badge
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          ROUNDED=${{ steps.coverage.outputs.rounded }}
-          sed -i "s|coverage-100\.svg|coverage-${ROUNDED}.svg|g" README.md
-          echo "Updated README to use coverage-${ROUNDED}.svg"
+  action-compatibility:
+    # Runs the badge generator with the runner's system Python (3.10 on Ubuntu 22.04),
+    # the oldest interpreter the action supports, without installing anything.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
 
-      - name: Commit and push README with updated coverage badge
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Generate a badge from every fixture format
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git status
-          git add README.md
-          if git diff --staged --quiet; then
-            echo "No changes to commit. README is already up to date."
-          else
-            git commit -m "Update coverage badge to ${{ steps.coverage.outputs.coverage }}% (rounded to ${{ steps.coverage.outputs.rounded }}%)"
-            git push
-          fi
+          python3 --version
+          for report in tests/fixtures/*; do
+            coverage=$(python3 -m src.generate_badge --report "$report" --output "$RUNNER_TEMP/badge.svg")
+            echo "$report: $coverage%"
+            test "$coverage" = "75.0"
+          done
