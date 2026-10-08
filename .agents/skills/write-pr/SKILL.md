@@ -21,12 +21,13 @@ repo's PR template. This skill **writes content only**, opening the PR is the
    commits. Its expectations become the PR's verification list.
 3. Fill the repo PR template, **do not invent a different structure**:
    [`.github/PULL_REQUEST_TEMPLATE.md`](../../../.github/PULL_REQUEST_TEMPLATE.md)
-   - **Summary**: 2-4 bullets, impact on action users first (new input, changed output,
-     changed badge URL).
-   - **Verification**: what was actually run, with the result: `make check`, and for
+   - **Summary**: what changes and why, impact on action users first (new input, changed
+     output, changed badge URL), and the issue it closes (`Closes #123`).
+   - **Test plan**: what was actually run, with the result: `make check`, and for
      publishing or URL changes the private-repo run described in `AGENTS.md`. Never list a
      check that was not run.
-   - **Notes**: breaking changes for users pinned to `@v1`, follow-ups, or omit.
+   - **Breaking change**: what breaks for users pinned to `@v1` and how to update; delete the
+     section when nothing breaks.
 4. Write the filled body to a gitignored scratch file `pr-body.tmp` (matched by
    `*.tmp`) so `make-pr` can pass it via `--body-file`.
 5. Show the drafted body to the user.

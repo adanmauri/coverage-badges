@@ -103,7 +103,7 @@ for people and agents alike, and the constraints on the action code are in
   (`feat(parser): ...`, `fix(publish): ...`), one concern per commit, no tool attribution.
 - **Branches:** `feat/...`, `fix/...`, `docs/...`, `chore/...` from an up-to-date `main`; never
   push to `main`.
-- **Pull requests:** fill [the template](../.github/PULL_REQUEST_TEMPLATE.md); Verification lists
+- **Pull requests:** fill [the template](../.github/PULL_REQUEST_TEMPLATE.md); the test plan lists
   only what was actually run.
 
 ## Testing

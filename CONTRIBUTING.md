@@ -54,7 +54,7 @@ check in a private repository described in
 ### Pull Request Guidelines
 
 - **All PRs should be opened against the `main` branch**
-- Fill the PR template; under Verification, list only what you actually ran
+- Fill the PR template; under Test plan, list only what you actually ran
 - Aim for atomic commits (one logical change per commit)
 - If your PR changes inputs, outputs or badge URLs for users pinned to `@v1`, say so in the title
   with `!` (`feat(action)!: ...`) and explain it under Notes
