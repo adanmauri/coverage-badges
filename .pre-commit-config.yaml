@@ -1,5 +1,6 @@
 # Local checks: the commit hook and `make lint` run this file. Install the hooks once with
-# `make setup`. CI runs MegaLinter (.github/workflows/code-quality.yaml) for the Python linters.
+# `make setup`. CI runs MegaLinter (.github/workflows/code-quality.yaml); the Python linters it
+# runs are also here, so a commit that passes locally does not fail there.
 # Python tool revs match uv.lock. Bump revs with `pre-commit autoupdate` (pick releases at
 # least two weeks old).
 
@@ -69,6 +70,30 @@ repos:
 
   - repo: local
     hooks:
+      - id: mypy
+        name: mypy
+        entry: uv run --locked mypy src tests tooling
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: pyright
+        name: pyright
+        entry: uv run --locked pyright src tests tooling
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: pylint
+        name: pylint
+        entry: uv run --locked pylint src tests tooling
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: bandit
+        name: bandit
+        entry: uv run --locked bandit -q -r src -c pyproject.toml
+        language: system
+        types: [python]
+        pass_filenames: false
       - id: check-agents
         name: agent pointers in sync with .agents/
         entry: uv run --no-project tooling/sync_agents.py --check

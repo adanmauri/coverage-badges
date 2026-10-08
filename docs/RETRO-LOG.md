@@ -19,6 +19,8 @@ One entry per session retrospective (see the `retro` skill), newest first.
     Verification step 2 says so, so rendering is never reported as verified without a person.
   - A command failed because zsh does not split unquoted variables → shell rule in the coding
     standards.
+  - A commit went out with a pyright error that MegaLinter would have failed in CI, because
+    `make check` had no type checkers → mypy, pyright, pylint and bandit run as local hooks.
   - `.cursorrules` belonged to another project and the README promised pre-commit hooks that did
     not exist → `.agents/rules/`, `.pre-commit-config.yaml` and `make check`.
 - **Follow-ups:** tests ran through `uv` while dependencies were declared in Pipenv; the owner
