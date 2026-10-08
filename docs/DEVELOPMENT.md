@@ -93,5 +93,22 @@ attribution lines.
 
 ## Releasing
 
-Not done yet: users will pin `adanmauri/coverage-badges@v1`, so the first tag is a public contract.
-The steps are tracked in [`TODO.md`](../TODO.md).
+Users pin `adanmauri/coverage-badges@v1` or an exact `vX.Y.Z`, and the repository has immutable
+releases turned on: once published, a `vX.Y.Z` tag can never move or be deleted, so a release is
+final. Agents prepare the notes and the commands; a person runs them (`.claude/settings.json` does
+not let agents create tags or releases).
+
+1. Merge everything for the release to `main`, and wait for its workflows to pass. Bump `version`
+   in `pyproject.toml` in the same way.
+2. Write the notes: what changes for action users, requirements, known limits, and any breaking
+   change.
+3. Create a draft pinned to the commit; a draft creates its tag only when published:
+   `gh release create vX.Y.Z --draft --title vX.Y.Z --target <sha> --notes-file <notes>`.
+4. Publish it from the web with **Publish this Action to the GitHub Marketplace** checked
+   (categories: Code quality, then Testing). Publishing needs two-factor authentication, and
+   updates the [Marketplace listing](https://github.com/marketplace/actions/coverage-badge-for-private-repos).
+5. Move the major tag, so `@v1` users get the release:
+   `git fetch --tags && git tag -f v1 vX.Y.Z && git push -f origin v1`. `v1` is not a release, so
+   it stays movable.
+
+A breaking change is `v2.0.0` with a new `v2` tag; `v1` stays on the last `v1.x.y`.

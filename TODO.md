@@ -1,16 +1,14 @@
 # TODO
 
-## Release
+## Features
 
-- Tag `v1` (and a moving `v1` major tag) so `adanmauri/coverage-badges@v1` resolves.
-- Publish the action to the GitHub Marketplace.
+- More badge styles: a `style` input with the shields.io styles (`flat`, `flat-square`,
+  `for-the-badge`, `plastic`, `social`), keeping today's look as the default.
 
 ## Verification
 
+- Publish a changed badge with `actions/checkout` v6 or v7, which keep the credentials in a separate
+  file. Publishing was tested with v5; this repository's CI uses v7 but has not had to push a
+  changed badge since.
 - Check badge rendering in the GitHub iOS app (only Android was tested).
 - Run the action on a macOS runner (only Ubuntu 22.04 and 24.04 were tested).
-
-## Hardening
-
-- Run the MegaLinter image by digest: the action pinned by commit still pulls
-  `ghcr.io/oxsecurity/megalinter-python:v10.1.0` by tag (docs/adr/0009).

@@ -66,10 +66,20 @@ linters at `pyproject.toml`, and the other linters' settings live in the reposit
   `additional_dependencies` for the Node.js and Go packages, as `rev` for betterleaks, actionlint,
   shellcheck and zizmor. pre-commit installs the Node.js and Go runtimes they need.
 
-**Bumping MegaLinter**, usually a Dependabot pull request: read the versions in the new image's
-Dockerfile (`flavors/python/Dockerfile` in the MegaLinter repository, at the new commit), update
-the non-Python hooks in `.pre-commit-config.yaml` to match, run `make check`, fix what the new
-versions report, and push it all in the same pull request. Nothing checks this automatically.
+**Bumping MegaLinter** is manual: CI runs its image by digest, and Dependabot does not update
+`docker://` references.
+
+1. Pick a release from [MegaLinter's releases](https://github.com/oxsecurity/megalinter/releases),
+   at least 14 days old, and read its changelog for breaking changes.
+2. Get the image digest: `docker buildx imagetools inspect ghcr.io/oxsecurity/megalinter-python:vX.Y.Z`
+   prints it as `Digest:`.
+3. Update the `uses: docker://ghcr.io/oxsecurity/megalinter-python:vX.Y.Z@sha256:...` line in
+   `code-quality.yaml`, tag and digest together.
+4. Read the versions in the release's Dockerfile (`flavors/python/Dockerfile` in the MegaLinter
+   repository, at the tag) and update the non-Python hooks in `.pre-commit-config.yaml` to match.
+5. Run `make check`, fix what the new versions report, and push it all in one pull request.
+
+Nothing checks the hook versions automatically.
 
 ## What a pull request checks
 
@@ -103,10 +113,8 @@ A repository ruleset ("Main Branch Protection") guards `main`:
 - The `megalinter`, `trivy`, `bandit` and `test` checks must pass, on a branch that is up to date
   with `main`.
 - The history stays linear: squash or rebase, no merge commits.
-- A code owner must review (`.github/CODEOWNERS` names `@adanmauri` for everything), and only
-  roles with bypass, Admin here, can update `main`. In practice the maintainer merges with
-  "Merge without waiting for requirements (bypass rules)" once the checks pass, since nobody can
-  approve their own pull request.
+- No approval is required, so the maintainer merges once the checks pass. Admins can bypass the
+  ruleset, for an emergency only.
 
 The ruleset covers `main` only, so the action can push this repository's badge to the `badges`
 branch.
@@ -148,4 +156,7 @@ nothing leaked.
   Trivy binary's version.
 - Checkouts drop their credentials (`persist-credentials: false`), except in the job that pushes
   the badge.
-- Still open: the MegaLinter action pulls its Docker image by tag (`TODO.md`).
+- Container images run by digest. MegaLinter runs as
+  `docker://ghcr.io/oxsecurity/megalinter-python:v10.1.0@sha256:...`, because its action, even
+  pinned to a commit, pulled the image by tag. Dependabot does not update `docker://` references,
+  so MegaLinter is bumped by hand (above).

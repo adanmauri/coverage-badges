@@ -6,7 +6,8 @@
 
 <!-- Stack: what the action runs on, then the tools this repository is developed with. -->
 <p align="center">
-  <img src="https://img.shields.io/badge/GitHub%20Action-composite-2088FF.svg?logo=githubactions&logoColor=white" alt="GitHub Action: composite">
+  <a href="https://github.com/marketplace/actions/coverage-badge-for-private-repos"><img src="https://img.shields.io/badge/GitHub%20Action-composite-2088FF.svg?logo=githubactions&logoColor=white" alt="GitHub Action: composite"></a>
+  <a href="https://github.com/marketplace/actions/coverage-badge-for-private-repos"><img src="https://img.shields.io/github/v/release/adanmauri/coverage-badges?logo=github&logoColor=white&label=release" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/Bash-4EAA25.svg?logo=gnubash&logoColor=white" alt="Bash">
   <img src="https://img.shields.io/badge/Git-F05032.svg?logo=git&logoColor=white" alt="Git">
@@ -19,6 +20,8 @@
   <a href="https://github.com/pre-commit/pre-commit"><img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" alt="pre-commit"></a>
 </p>
 
+---
+
 <!-- Quality: the workflows on main, and this repository's own coverage badge, published by the action. -->
 <p align="center">
   <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/code-quality.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/code-quality.yaml/badge.svg?branch=main" alt="Code Quality"></a>
@@ -29,6 +32,8 @@
   <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot Updates"></a>
   <a href="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml"><img src="https://github.com/adanmauri/coverage-badges/actions/workflows/todo-to-issue.yaml/badge.svg?branch=main" alt="TODO to Issue"></a>
 </p>
+
+---
 
 ## Table of Contents
 

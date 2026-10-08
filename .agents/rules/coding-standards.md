@@ -54,7 +54,8 @@ tool runs where is in [`docs/CI.md`](../../docs/CI.md).
 ## Workflows: [ADR-0009](../../docs/adr/0009-actions-are-pinned-to-a-commit.md)
 
 - Every `uses:` is pinned to a full commit SHA with the version in a comment
-  (`@<sha> # v5.1.0`). `persist-credentials: false` on every checkout whose job does not push.
+  (`@<sha> # v5.1.0`), and a `docker://` image to its digest (`:vX.Y.Z@sha256:...`).
+  `persist-credentials: false` on every checkout whose job does not push.
 - A tag, release or package that disappeared or moved is a signal, not housekeeping: read the
   upstream advisories and check this repository's runs before replacing it.
 - What a tool's container ships (versions, venvs, uv) is read from its Dockerfile at the pinned

@@ -62,6 +62,9 @@ its tag no longer existed.
   in a comment: `uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0`. No
   exception for first-party actions: deciding which publishers to trust is the judgement that
   failed with `trivy-action`.
+- A container image runs by digest. The MegaLinter action, even pinned to a commit, pulled its
+  image by tag (`ghcr.io/oxsecurity/megalinter-python:v10.1.0`), so `code-quality.yaml` runs the
+  image directly, as `docker://...:v10.1.0@sha256:...` (added after the v1.0.0 release).
 - zizmor enforces it, as a local hook and in MegaLinter.
 - Dependabot updates actions monthly, with a 14-day cooldown, as for packages. It moves the SHA
   and the comment together, so an upgrade is a reviewed pull request, never a silent change.
@@ -88,11 +91,9 @@ its tag no longer existed.
   weeks after its release at the earliest.
 - Trivy and Bandit run twice: in `security.yaml`, daily and reporting without blocking, and in
   MegaLinter, on pull requests and `main`, blocking.
-- The MegaLinter action runs its image by tag (`ghcr.io/oxsecurity/megalinter-python:v10.1.0`),
-  which pinning the action to a commit does not freeze.
+- Dependabot does not update `docker://` references, so MegaLinter is bumped by hand.
 
 ### Follow-ups
 
-- `TODO.md`: run the MegaLinter image by digest.
 - The workflow rules in [`coding-standards.md`](../../.agents/rules/coding-standards.md) cite
   this ADR.

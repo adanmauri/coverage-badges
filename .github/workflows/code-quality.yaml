@@ -52,8 +52,10 @@ jobs:
           echo "all=$all" >> "$GITHUB_OUTPUT"
 
       - name: Run MegaLinter
-        uses: oxsecurity/megalinter/flavors/python@9949bad031045f366be2467e00e8371a7328a2e2 # v10.1.0
-        # Linter settings live in .mega-linter.yml.
+        # The image the MegaLinter action runs, by digest: the action pinned by commit still pulled
+        # it by tag. Dependabot does not update docker:// references; bump it by hand
+        # (docs/CI.md). Linter settings live in .mega-linter.yml.
+        uses: docker://ghcr.io/oxsecurity/megalinter-python:v10.1.0@sha256:f12a40b0dd5ad2c9aa029dcf7d3a0a92182d05cacc32d37756e67c3446484acb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: ${{ steps.scope.outputs.all }}
