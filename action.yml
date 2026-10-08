@@ -1,5 +1,5 @@
 name: Coverage Badge for Private Repos
-description: Generate a coverage badge from your test report and publish it so it renders in private repository READMEs, with no third-party service.
+description: Keep a coverage badge up to date in private repository READMEs, with no third-party service.
 author: adanmauri
 
 branding:
