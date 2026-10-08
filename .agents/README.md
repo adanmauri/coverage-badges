@@ -1,6 +1,7 @@
 # `.agents/`: agent configuration (vendor-neutral)
 
-Single source of truth for agent skills and rules, following the
+Single source of truth for agent skills and rules (decision:
+[ADR-0006](../docs/adr/0006-agent-assets-live-in-agents-with-generated-pointers.md)), following the
 [`.agents` protocol](https://dotagentsprotocol.com/). The operating manual is the repo-root
 [`AGENTS.md`](../AGENTS.md), where the [agents.md](https://agents.md/) standard discovers it;
 [`CLAUDE.md`](../CLAUDE.md) and [`.github/copilot-instructions.md`](../.github/copilot-instructions.md)

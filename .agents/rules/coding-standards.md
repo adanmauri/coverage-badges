@@ -4,7 +4,9 @@ description: Coding standards for AI agents and humans working in Coverage Badge
 
 # Rules: coding standards
 
-Binding checklist. The tools enforce most of it: `make check` locally, MegaLinter in CI.
+Binding checklist. The tools enforce most of it: `make check` locally, MegaLinter in CI
+([ADR-0005](../../docs/adr/0005-quality-gates-pre-commit-locally-megalinter-in-ci.md)). The map of which
+tool runs where is in [`docs/DEVELOPMENT.md`](../../docs/DEVELOPMENT.md#quality-gates).
 
 ## Python
 
@@ -37,7 +39,7 @@ Binding checklist. The tools enforce most of it: `make check` locally, MegaLinte
 - Tests that run git isolate themselves from the developer's git configuration
   (`GIT_CONFIG_GLOBAL=/dev/null`), see `tests/test_publish_badge.py`.
 
-## Dependencies
+## Dependencies: [ADR-0004](../../docs/adr/0004-uv-is-the-development-toolchain.md)
 
 - **uv** for everything: `uv sync`, `uv run`, `uv add --group <test|lint> <package>`. NEVER call
   `pip` or create a virtualenv by hand. Dev tools are unpinned in `pyproject.toml` and pinned in

@@ -1,11 +1,14 @@
 # Contributing to Coverage Badges
 
-Thank you for your interest in contributing to Coverage Badges! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to Coverage Badges! This document covers the
+contribution process. How to set up, check and change the code is in
+[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md), and the binding coding standards are in
+[`.agents/rules/`](.agents/rules/).
 
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/adanmauri/coverage-badges.git`
+2. Clone your fork: `git clone https://github.com/<your-user>/coverage-badges.git`
 3. Set up the development environment (needs [uv](https://docs.astral.sh/uv/)):
 
    ```bash
@@ -15,11 +18,11 @@ Thank you for your interest in contributing to Coverage Badges! This document pr
 ## Reporting Issues
 
 - Before opening a new issue, search for existing issues to avoid duplicates
-- Include minimal examples when reporting bugs
-- If reporting a bug, try to reproduce it on the latest development version
+- Include minimal examples when reporting bugs: the workflow step, the coverage report format and,
+  if you can, a trimmed report that reproduces it
 - Include relevant information:
-  - Python version
-  - Operating system
+  - Runner OS and the `python3 --version` it ships
+  - Whether the repository is private, and the `mode` used
   - Steps to reproduce
   - Expected vs actual behavior
 
@@ -28,238 +31,54 @@ Thank you for your interest in contributing to Coverage Badges! This document pr
 ### For New Contributors
 
 If you're new to the project and would like guidance on where to start, feel free to:
+
 - Open an issue asking for suggestions
 - Comment on existing issues to express interest
 - Start with small improvements like documentation or bug fixes
 
 ### Development Workflow
 
-1. Create a new branch from `main`:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-   or for bug fixes:
-   ```bash
-   git checkout -b fix/your-bug-fix
-   ```
-
-2. Make your changes following the style guidelines below
-
-3. Format and lint your code:
-   ```bash
-   black src/
-   isort src/
-   pylint src/
-   flake8 src/
-   mypy src/
-   ruff check src/
-   pyright src/
-   bandit -r src/
-   ```
-
-4. Write or update tests if needed (see Testing section)
-
-5. Commit your changes with descriptive messages:
-   ```bash
-   git commit -m "Add feature: description of what you did"
-   ```
-
+1. Create a branch from an up-to-date `main`: `feat/...`, `fix/...`, `docs/...` or `chore/...`
+2. Make your changes following the [coding standards](.agents/rules/coding-standards.md) and, for
+   `action.yml`, `scripts/` and `src/`, the [action guardrails](.agents/rules/action-guardrails.md)
+3. Add or update tests (see [Testing](docs/DEVELOPMENT.md#testing))
+4. Run `make check` until it passes; the commit hook runs the same linters on staged files
+5. Commit with [Conventional Commits](https://www.conventionalcommits.org/):
+   `feat(parser): read Clover reports`, `fix(publish): retry on a rejected push`
 6. Push to your fork and open a Pull Request
+
+A change that affects how the badge is published or which URL it uses also needs the rendering
+check in a private repository described in
+[ADR-0001](docs/adr/0001-publish-badges-where-private-readmes-render-them.md).
 
 ### Pull Request Guidelines
 
 - **All PRs should be opened against the `main` branch**
-- Use descriptive PR titles and descriptions
+- Fill the PR template; under Verification, list only what you actually ran
 - Aim for atomic commits (one logical change per commit)
-- If your PR introduces breaking changes, prefix the title with `[BREAKING]`
-- Keep PRs focused - avoid mixing unrelated changes
+- If your PR changes inputs, outputs or badge URLs for users pinned to `@v1`, say so in the title
+  with `!` (`feat(action)!: ...`) and explain it under Notes
+- Keep PRs focused: avoid mixing unrelated changes
 - If a PR is not ready for review, mark it as a Draft
-- Update documentation if you add or change functionality
+- Update the README, `action.yml` descriptions and docs when you change behavior
 
 ### Git Best Practices
 
 - Avoid working directly on the `main` branch of your fork
-- Use descriptive commit messages:
-  - Good: `Add validation for coverage percentage in BadgeGenerator`
-  - Bad: `fix stuff`
-- Use `git add -p` or `git add -i` to stage changes selectively
+- Use `git add -p` to stage changes selectively
 - If conflicts arise, prefer `git rebase` over `git merge` to keep history clean
 - When linking to code in discussions, use GitHub's permalink feature (press `y` while viewing code)
 
-## Style Guidelines
+### Decisions
 
-This project follows strict style guidelines to ensure consistency. The binding rules live in [`.agents/rules/`](.agents/rules/) and [`AGENTS.md`](AGENTS.md); run `make setup` once and `make check` before opening a PR.
-
-### Python Version
-
-- **Python 3.10+ syntax is required**
-- Development uses the Python in `.python-version` (3.14); uv installs it when needed
-
-### Type Hints
-
-- **All function and method signatures must include type hints**
-- Use built-in types instead of `typing` module when possible:
-  - Use `dict[str, int]` instead of `Dict[str, int]`
-  - Use `list[str]` instead of `List[str]`
-  - Use `tuple[int, str]` instead of `Tuple[int, str]`
-  - Use `set[int]` instead of `Set[int]`
-- Use union syntax: `type | None` instead of `Optional[type]`
-- Use `type1 | type2` instead of `Union[type1, type2]`
-- Only import from `typing` when necessary (e.g., `Any`, `IO`, `BinaryIO`, `TextIO`, `cast`)
-
-**Example:**
-```python
-# ✅ Correct
-def process_data(data: dict[str, int]) -> list[str] | None:
-    ...
-
-# ❌ Incorrect
-from typing import Dict, List, Optional
-def process_data(data: Dict[str, int]) -> Optional[List[str]]:
-    ...
-```
-
-### Code Formatting
-
-- **Follow PEP 8 guidelines**
-- **Use Black for formatting** (line length: 100 characters)
-- **Use isort for import sorting** (Black profile)
-- Run formatters before committing:
-  ```bash
-  black src/
-  isort src/
-  ```
-
-### Docstrings
-
-All docstrings must follow this format:
-
-**Module-level docstrings:**
-```python
-"""Brief description of the module.
-
-More detailed description that explains what the module does,
-its purpose, and key concepts. Can span multiple lines to
-provide comprehensive context about the module's functionality.
-
-Additional paragraphs can be added to explain more complex
-aspects or usage patterns.
-"""
-```
-
-**Class docstrings:**
-```python
-class MyClass:
-    """Brief description of the class.
-
-    More detailed description explaining the class purpose,
-    its main responsibilities, and how it fits into the
-    larger system architecture.
-
-    Additional context about usage patterns or important
-    design decisions.
-    """
-```
-
-**Method/Function docstrings:**
-```python
-def my_method(self, param1: str, param2: int | None = None) -> dict[str, Any]:
-    """Brief description of what the method does."""
-```
-
-**Key guidelines:**
-- Start with a brief one-line summary
-- Follow with a blank line
-- Add detailed description in paragraphs (for modules and classes)
-- Be descriptive and clear
-- Use proper capitalization and punctuation
-- Document all public methods, classes, and modules
-
-### Imports
-
-- Group imports in this order:
-  1. Standard library imports
-  2. Third-party imports
-  3. Local imports (from `src.`)
-- Use absolute imports from `src.` prefix
-- Sort imports with isort (Black profile)
-
-**Example:**
-```python
-import argparse
-from pathlib import Path
-
-from src import BadgeGenerator
-```
-
-### Error Handling
-
-- Use specific exception types when possible
-- Include descriptive error messages in English
-- Use `ValueError` for invalid input
-- Use `FileNotFoundError` for missing files
-- Use `NotImplementedError` for abstract methods
-
-### Logging
-
-- Use standard `logging` module if logging is needed
-- **Do not use emojis in log messages**
-- Use appropriate log levels (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-- Include context in log messages
-
-### Code Style
-
-- Use descriptive variable and function names
-- Prefer explicit over implicit code
-- Don't leave trailing whitespace
-- Maximum line length: 100 characters (enforced by Black)
-- Use 4 spaces for indentation (no tabs)
-
-### Language Requirements
-
-- **All comments and messages must be in English**
-- **Logs must not use emojis** - Use plain text messages only
-- **Error messages and user-facing text must be in English**
-
-## Testing
-
-- Write tests for all public functions and classes
-- Use pytest for testing
-- Test files should be in `tests/` directory
-- Test file names should start with `test_`
-- Use descriptive test function names starting with `test_`
-
-**Example:**
-```python
-def test_badge_generator_get_color_high_coverage():
-    """Test that high coverage returns green color."""
-    generator = BadgeGenerator()
-    assert generator.get_color(85.0) == "#4c1"
-```
-
-Run tests with:
-```bash
-make test          # uv run pytest, with coverage
-make test-compat   # the same tests on Python 3.10
-```
-
-## Dependency Management
-
-- **Use uv for everything**: `uv sync`, `uv run`, `uv add`. Do not call `pip` directly.
-- **The action has no runtime dependencies** (`dependencies = []` in `pyproject.toml`). It runs
-  on the runner's own Python with the standard library only; adding one needs approval.
-- **Development tools** live in the `test` and `lint` dependency groups, unpinned in
-  `pyproject.toml` and pinned in `uv.lock`.
-
-When adding a development dependency:
-1. `uv add --group test <package>` (or `--group lint`)
-2. Commit both `pyproject.toml` and `uv.lock`
+A change that reverses or extends a recorded decision (publishing modes, runtime, toolchain,
+quality gates) comes with a new ADR in [docs/adr/](docs/adr/README.md), from the template there.
 
 ## Code Review Process
 
 1. All PRs require at least one approval before merging
 2. Maintainers will review code for:
-   - Adherence to style guidelines
+   - Adherence to the coding standards and action guardrails
    - Code quality and correctness
    - Test coverage
    - Documentation updates
@@ -269,6 +88,7 @@ When adding a development dependency:
 ## Questions?
 
 If you have questions or need help, feel free to:
+
 - Open an issue with the `question` label
 - Comment on existing issues or PRs
 - Reach out to maintainers

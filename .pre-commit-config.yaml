@@ -100,6 +100,12 @@ repos:
         language: system
         pass_filenames: false
         files: ^(\.agents/|\.claude/skills/|\.github/(skills|instructions)/|\.cursor/rules/|tooling/sync_agents\.py$)
+      - id: check-docs
+        name: docs links and ADR index
+        entry: uv run --no-project tooling/check_docs.py
+        language: system
+        pass_filenames: false
+        files: \.md$|^tooling/check_docs\.py$
       - id: no-tool-attribution
         name: no tool attribution in the commit message
         entry: uv run --no-project tooling/check_commit_msg.py

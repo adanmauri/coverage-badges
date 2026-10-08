@@ -18,6 +18,8 @@ Do not change a badge URL form without re-verifying it (see [Verification](#veri
 | Concern | Source |
 | ------- | ------ |
 | What the action does, inputs, outputs, supported reports | [`README.md`](README.md) |
+| Setup, commands, which check runs where, conventions | [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) |
+| Decisions and their rationale | [`docs/adr/`](docs/adr/README.md) |
 | Hard constraints on the action code | [`.agents/rules/action-guardrails.md`](.agents/rules/action-guardrails.md) |
 | Code style and tooling | [`.agents/rules/coding-standards.md`](.agents/rules/coding-standards.md) |
 | Pending work | [`TODO.md`](TODO.md) |
@@ -42,7 +44,9 @@ tooling/                    repo scripts (agent pointer sync, commit-msg hook), 
 1. **Branch** from an up-to-date `main`: `feat/...`, `fix/...`, `docs/...`, `chore/...`.
 2. **Commit** with the `create-commit` skill (Conventional Commits, no tool attribution).
 3. **Open the PR** with `write-pr` (body) and `make-pr` (mechanics).
-4. **Close the loop:** run `retro` after a substantive session.
+4. **Record decisions:** a change that reverses or extends an ADR comes with a new one, from
+   [`docs/adr/template.md`](docs/adr/template.md); rules cite the ADR instead of repeating it.
+5. **Close the loop:** run `retro` after a substantive session.
 
 ## Before you finish
 

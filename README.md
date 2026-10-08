@@ -125,8 +125,9 @@ as 99.9% and never rounded up to 100%.
 
 ## How It Works
 
-- Runs on the runner's `python3` (3.10 or newer, preinstalled on GitHub-hosted Ubuntu and macOS
-  runners) using only the standard library. Nothing is installed and no data leaves GitHub.
+- Runs on the runner's `python3` (3.10 or newer, preinstalled on GitHub-hosted Ubuntu runners;
+  macOS is expected to work but not tested yet) using only the standard library. Nothing is
+  installed and no data leaves GitHub.
 - Builds the commit with git plumbing on a temporary index, so your checkout and working tree are
   not modified.
 - Skips the commit when the badge did not change, and retries when a concurrent run pushed first.

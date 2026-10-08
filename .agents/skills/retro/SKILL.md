@@ -27,6 +27,8 @@ session starts better. One retro is one iteration of the loop, recorded in
    | A recurring workflow | a skill under `.agents/skills/` |
    | A constraint on code | `.agents/rules/` |
    | Layout, or the bar for "done" | `AGENTS.md` |
+   | A decision and its rationale | a new or superseding ADR in `docs/adr/` |
+   | How to set up, run or check things | `docs/DEVELOPMENT.md` |
    | A check that should have caught it | a hook in `.pre-commit-config.yaml` or a check in `tooling/` |
    | A command the agent kept asking permission for | `.claude/settings.json` (shared) or `.claude/settings.local.json` (personal) |
    | A personal preference of the user, not a repo rule | the agent's own memory, not the repo |
