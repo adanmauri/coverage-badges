@@ -4,8 +4,7 @@
 # (docs/adr/0007):
 # - Python linters run from uv.lock, updated like any development dependency.
 # - Node.js and Go linters pin the image's version in additional_dependencies, and betterleaks,
-#   actionlint, shellcheck and zizmor keep it as their rev; check-linter-versions fails when they
-#   drift.
+#   actionlint, shellcheck and zizmor keep it as their rev. Update them with MegaLinter.
 # The scanners that need the network or a vulnerability database run only in CI. Bump the other
 # revs with `pre-commit autoupdate` (pick releases at least two weeks old).
 
@@ -165,13 +164,6 @@ repos:
         additional_dependencies: [jscpd@5.0.16]
         types: [text]
         pass_filenames: false
-      - id: check-linter-versions
-        name: linter versions match the MegaLinter image
-        # Reads the image's Dockerfile from GitHub, so it runs only when a version can change.
-        entry: uv run --no-project tooling/check_linter_versions.py
-        language: system
-        pass_filenames: false
-        files: ^(\.pre-commit-config\.yaml|\.github/workflows/code-quality\.yaml|tooling/check_linter_versions\.py)$
       - id: check-agents
         name: agent pointers in sync with .agents/
         entry: uv run --no-project tooling/sync_agents.py --check

@@ -32,9 +32,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Check local linter versions against the MegaLinter image
-        run: python3 tooling/check_linter_versions.py
-
       - name: Choose what to lint
         id: scope
         env:

@@ -19,16 +19,15 @@ group. Editors pick it up from `.venv/bin/python` (VS Code is preconfigured).
 
 ## Commands
 
-| Command                      | What it does                                                                                                                                 |
-|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
-| `make check`                 | `lint`, then `test` and `test-compat`: the definition of done for code                                                                       |
-| `make lint`                  | Every hook in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml) over the whole repository                                              |
-| `make test`                  | `uv run pytest` with coverage, on the development Python                                                                                     |
-| `make test-compat`           | The tests on Python 3.10 in a throwaway environment ([ADR-0002](adr/0002-the-action-runs-on-the-runner-python-with-the-standard-library.md)) |
-| `make check-linter-versions` | Fail if a non-Python hook's version differs from the MegaLinter image (needs network)                                                        |
-| `make sync-agents`           | Regenerate the agent pointers from `.agents/`                                                                                                |
-| `make check-agents`          | Fail if the agent pointers drifted                                                                                                           |
-| `make help`                  | List the targets                                                                                                                             |
+| Command             | What it does                                                                                                                                 |
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| `make check`        | `lint`, then `test` and `test-compat`: the definition of done for code                                                                       |
+| `make lint`         | Every hook in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml) over the whole repository                                              |
+| `make test`         | `uv run pytest` with coverage, on the development Python                                                                                     |
+| `make test-compat`  | The tests on Python 3.10 in a throwaway environment ([ADR-0002](adr/0002-the-action-runs-on-the-runner-python-with-the-standard-library.md)) |
+| `make sync-agents`  | Regenerate the agent pointers from `.agents/`                                                                                                |
+| `make check-agents` | Fail if the agent pointers drifted                                                                                                           |
+| `make help`         | List the targets                                                                                                                             |
 
 The badge generator runs on its own as well:
 `uv run python -m src.generate_badge --report coverage.xml -o coverage.svg`.
@@ -42,32 +41,31 @@ A linter in both runs at the same version in both
 they change, `main` checks everything
 ([ADR-0008](adr/0008-pull-requests-check-what-they-change-main-checks-everything.md)).
 
-| Tool                                   | Checks                                                                                  |       Local hook       | CI                                        |
-|----------------------------------------|-----------------------------------------------------------------------------------------|:----------------------:|-------------------------------------------|
-| pre-commit-hooks                       | whitespace, end of file, YAML, TOML, large files, merge markers, shebangs, private keys |          yes           |                                           |
-| betterleaks, secretlint                | secrets in the repository                                                               |          yes           | MegaLinter                                |
-| uv-lock                                | `uv.lock` matches `pyproject.toml`                                                      |          yes           | `uv sync --locked` fails                  |
-| Black, isort                           | formatting, import order (Black profile, 100 columns)                                   |          yes           | MegaLinter                                |
-| Ruff, Flake8, Pylint                   | lint                                                                                    |          yes           | MegaLinter                                |
-| mypy, Pyright                          | types                                                                                   |          yes           | MegaLinter                                |
-| Bandit                                 | security issues in `src/`                                                               |          yes           | MegaLinter, `security.yaml`               |
-| shellcheck                             | `scripts/*.sh`                                                                          |          yes           | MegaLinter                                |
-| actionlint                             | workflow syntax and expressions                                                         |          yes           | MegaLinter                                |
-| zizmor                                 | security of `action.yml`, the workflows and `dependabot.yaml`                           |          yes           | MegaLinter                                |
-| shfmt                                  | shell formatting                                                                        |          yes           | MegaLinter                                |
-| markdownlint, markdown-table-formatter | Markdown style and table layout                                                         |          yes           | MegaLinter                                |
-| yamllint, prettier, jsonlint           | YAML and JSON syntax and formatting                                                     |          yes           | MegaLinter                                |
-| cspell                                 | spelling (project words in `.cspell.json`)                                              |          yes           | MegaLinter                                |
-| jscpd                                  | copied code                                                                             |          yes           | MegaLinter                                |
-| `tooling/check_linter_versions.py`     | the non-Python hooks above match the MegaLinter image's versions                        | when a version changes | `code-quality.yaml`                       |
-| `tooling/sync_agents.py --check`       | agent pointers in sync with `.agents/`                                                  |          yes           |                                           |
-| `tooling/check_docs.py`                | relative links in Markdown, ADR numbering and index                                     |          yes           |                                           |
-| `tooling/check_commit_msg.py`          | no tool attribution in the commit message                                               |       commit-msg       |                                           |
-| pytest                                 | tests on 3.14 with coverage, and on 3.10                                                |      `make check`      | `tests.yaml`                              |
-| The action itself                      | publishes this repository's badge from `main`                                           |                        | `tests.yaml`                              |
-| Trivy, Grype, OSV-Scanner, checkov     | vulnerable dependencies, misconfigured workflows                                        |                        | MegaLinter; Trivy also in `security.yaml` |
-| trufflehog                             | verified secrets                                                                        |                        | MegaLinter                                |
-| lychee, v8r                            | broken links, files that do not match their JSON schema                                 |                        | MegaLinter                                |
+| Tool                                   | Checks                                                                                  |  Local hook  | CI                                        |
+|----------------------------------------|-----------------------------------------------------------------------------------------|:------------:|-------------------------------------------|
+| pre-commit-hooks                       | whitespace, end of file, YAML, TOML, large files, merge markers, shebangs, private keys |     yes      |                                           |
+| betterleaks, secretlint                | secrets in the repository                                                               |     yes      | MegaLinter                                |
+| uv-lock                                | `uv.lock` matches `pyproject.toml`                                                      |     yes      | `uv sync --locked` fails                  |
+| Black, isort                           | formatting, import order (Black profile, 100 columns)                                   |     yes      | MegaLinter                                |
+| Ruff, Flake8, Pylint                   | lint                                                                                    |     yes      | MegaLinter                                |
+| mypy, Pyright                          | types                                                                                   |     yes      | MegaLinter                                |
+| Bandit                                 | security issues in `src/`                                                               |     yes      | MegaLinter, `security.yaml`               |
+| shellcheck                             | `scripts/*.sh`                                                                          |     yes      | MegaLinter                                |
+| actionlint                             | workflow syntax and expressions                                                         |     yes      | MegaLinter                                |
+| zizmor                                 | security of `action.yml`, the workflows and `dependabot.yaml`                           |     yes      | MegaLinter                                |
+| shfmt                                  | shell formatting                                                                        |     yes      | MegaLinter                                |
+| markdownlint, markdown-table-formatter | Markdown style and table layout                                                         |     yes      | MegaLinter                                |
+| yamllint, prettier, jsonlint           | YAML and JSON syntax and formatting                                                     |     yes      | MegaLinter                                |
+| cspell                                 | spelling (project words in `.cspell.json`)                                              |     yes      | MegaLinter                                |
+| jscpd                                  | copied code                                                                             |     yes      | MegaLinter                                |
+| `tooling/sync_agents.py --check`       | agent pointers in sync with `.agents/`                                                  |     yes      |                                           |
+| `tooling/check_docs.py`                | relative links in Markdown, ADR numbering and index                                     |     yes      |                                           |
+| `tooling/check_commit_msg.py`          | no tool attribution in the commit message                                               |  commit-msg  |                                           |
+| pytest                                 | tests on 3.14 with coverage, and on 3.10                                                | `make check` | `tests.yaml`                              |
+| The action itself                      | publishes this repository's badge from `main`                                           |              | `tests.yaml`                              |
+| Trivy, Grype, OSV-Scanner, checkov     | vulnerable dependencies, misconfigured workflows                                        |              | MegaLinter; Trivy also in `security.yaml` |
+| trufflehog                             | verified secrets                                                                        |              | MegaLinter                                |
+| lychee, v8r                            | broken links, files that do not match their JSON schema                                 |              | MegaLinter                                |
 
 Every linter MegaLinter runs on files offline is also a local hook, with the same settings file
 and, except for the Python linters, the same version. The scanners that need the network or a vulnerability database run only in
@@ -77,12 +75,12 @@ blocking. Each setting is explained there.
 
 ### CI workflows
 
-| Workflow             | Runs on                                                                                      | Jobs                                                                                                                                          |
-|----------------------|----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| `tests.yaml`         | push to `main`; PRs that touch the action, its scripts, `src/`, `tests/` or the Python setup | tests with coverage, then the action publishes the badge (`main` only); the generator on the system Python 3.10 of Ubuntu 22.04               |
-| `code-quality.yaml`  | push and PR to `main`                                                                        | linter versions check, then MegaLinter (Python flavor): the changed files on PRs, everything on `main` and on PRs that change linter settings |
-| `security.yaml`      | push and PR to `main`, daily                                                                 | Trivy (results in the Security tab) and Bandit (report in the job summary); neither blocks                                                    |
-| `todo-to-issue.yaml` | push to `main`                                                                               | turns `TODO` and `FIXME` comments in code into issues                                                                                         |
+| Workflow             | Runs on                                                                                      | Jobs                                                                                                                            |
+|----------------------|----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `tests.yaml`         | push to `main`; PRs that touch the action, its scripts, `src/`, `tests/` or the Python setup | tests with coverage, then the action publishes the badge (`main` only); the generator on the system Python 3.10 of Ubuntu 22.04 |
+| `code-quality.yaml`  | push and PR to `main`                                                                        | MegaLinter (Python flavor): the changed files on PRs, everything on `main` and on PRs that change linter settings               |
+| `security.yaml`      | push and PR to `main`, daily                                                                 | Trivy (results in the Security tab) and Bandit (report in the job summary); neither blocks                                      |
+| `todo-to-issue.yaml` | push to `main`                                                                               | turns `TODO` and `FIXME` comments in code into issues                                                                           |
 
 Actions are pinned to a commit SHA with the version in a comment
 ([ADR-0009](adr/0009-actions-are-pinned-to-a-commit.md)).
@@ -129,11 +127,11 @@ uv for everything ([ADR-0004](adr/0004-uv-is-the-development-toolchain.md)); nev
   MegaLinter image's ([ADR-0007](adr/0007-non-python-linter-versions-follow-the-megalinter-image.md)).
 - The non-Python hooks pin the image's version: in `additional_dependencies` (Node.js and Go
   packages) or as their `rev` (betterleaks, actionlint, shellcheck, zizmor).
-- **Bumping MegaLinter** (usually a Dependabot pull request): `make check-linter-versions` lists
-  every hook whose version changed. Update those in `.pre-commit-config.yaml`, run `make check`,
-  fix what the new versions report, and push it all in the same pull request.
-- Adding a non-Python linter: add it as a hook at the image's version, and to
-  `tooling/check_linter_versions.py`.
+- **Bumping MegaLinter** (usually a Dependabot pull request): read the versions in the new
+  image's Dockerfile (`flavors/python/Dockerfile` in the MegaLinter repository, at the new
+  commit), update the non-Python hooks in `.pre-commit-config.yaml` to match, run `make check`, fix
+  what the new versions report, and push it all in the same pull request.
+- Adding a non-Python linter: add it as a hook at the image's version.
 
 ## Agent assets
 

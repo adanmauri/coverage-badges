@@ -43,10 +43,9 @@ The settings are shared everywhere; the versions are shared for the non-Python l
   gitleaks), actionlint, shellcheck and zizmor (their `rev`). pre-commit installs the Node.js and
   Go runtimes when they are missing. bash-exec and `git diff --check` are covered by the
   pre-commit-hooks checks for shebangs, whitespace and merge markers.
-- [`tooling/check_linter_versions.py`](../../tooling/check_linter_versions.py) reads the image's
-  Dockerfile at the commit `code-quality.yaml` pins and compares those hook versions. It runs in
-  CI before MegaLinter, and as a hook when a file that holds a version changes. A Dependabot pull
-  request that bumps MegaLinter fails it until the hooks follow.
+- Nothing checks the alignment automatically: a script that compared the hooks with the image's
+  Dockerfile, in CI and as a hook, was tried and dropped at the owner's request. The pull request
+  that bumps MegaLinter updates the hook versions by hand, from the image's Dockerfile.
 - The scanners that need the network or a vulnerability database (Trivy, Grype, OSV-Scanner,
   trufflehog, checkov, lychee, v8r) run only in CI.
 
@@ -62,7 +61,7 @@ The settings are shared everywhere; the versions are shared for the non-Python l
 
 - A Python linter can disagree between the hooks and CI while their versions differ (on
   2026-10-08, pylint 4.0.9 locally and 4.0.7 in the image).
-- The check needs network access to read the Dockerfile.
+- A MegaLinter bump that forgets the hooks lets them drift silently until a linter disagrees.
 - The first `make setup` downloads Node.js and Go if missing, and builds shfmt and betterleaks.
 - A scanner finding shows up only in CI.
 

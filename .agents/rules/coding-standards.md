@@ -47,7 +47,7 @@ tool runs where is in [`docs/DEVELOPMENT.md`](../../docs/DEVELOPMENT.md#quality-
   pinned in `uv.lock`, which is committed; CI installs with `--locked`.
 - The non-Python hooks in `.pre-commit-config.yaml` pin the MegaLinter image's version and move
   only with it ([ADR-0007](../../docs/adr/0007-non-python-linter-versions-follow-the-megalinter-image.md)).
-  NEVER bump one on its own; `make check-linter-versions` fails if you do.
+  NEVER bump one on its own.
 - The action itself has no runtime dependencies (`dependencies = []`), and adding one needs
   approval.
 

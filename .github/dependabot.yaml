@@ -13,8 +13,8 @@ updates:
     open-pull-requests-limit: 10
 
   # Actions are pinned to a commit; Dependabot moves the SHA and its version comment together.
-  # A MegaLinter bump fails check_linter_versions.py until the hook versions in
-  # .pre-commit-config.yaml match the new image.
+  # A MegaLinter bump also needs the hook versions in .pre-commit-config.yaml updated by hand
+  # (docs/DEVELOPMENT.md).
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
