@@ -118,7 +118,7 @@ def orphans(expected: dict[Path, str]) -> list[Path]:
 
 def main() -> int:
     """Write the pointers, or report drift with --check."""
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(description=(__doc__ or "").partition("\n")[0])
     parser.add_argument("--check", action="store_true", help="report drift, write nothing")
     args = parser.parse_args()
 
