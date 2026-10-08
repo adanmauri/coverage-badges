@@ -31,9 +31,9 @@ not affected: it always scans the whole repository.
   `.yamllint.yml`, `.secretlintrc.json`, `.jscpd.json`, `lychee.toml`, `code-quality.yaml`) lints
   everything. Otherwise a stricter rule would pass its own pull request, which lints only the
   config file, and fail `main`.
-- MegaLinter's project-mode linters (Trivy, Grype, OSV-Scanner, Syft, Semgrep, betterleaks,
-  secretlint, trufflehog, checkov, jscpd, ls-lint) always scan the whole repository; MegaLinter
-  cannot narrow them. They are fast, and their findings are not tied to a file.
+- MegaLinter's project-mode linters (Trivy, Grype, OSV-Scanner, Syft, betterleaks, secretlint,
+  trufflehog, checkov, jscpd) always scan the whole repository; MegaLinter cannot narrow them.
+  They are fast, and their findings are not tied to a file.
 - **Tests** run in full whenever they run: selecting tests by diff would miss a change that breaks
   a module through another one. Pull requests that touch none of the action's or the tests' files
   skip the workflow; `main` always runs it, and publishes the badge.

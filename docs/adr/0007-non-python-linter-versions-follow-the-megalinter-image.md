@@ -67,4 +67,4 @@ The settings are shared everywhere; the versions are shared for the non-Python l
 
 ### Follow-ups
 
-- [`docs/DEVELOPMENT.md`](../DEVELOPMENT.md) describes how to bump MegaLinter.
+- [`docs/CI.md`](../CI.md) describes how to bump MegaLinter.

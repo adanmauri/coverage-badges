@@ -18,7 +18,9 @@ Do not change a badge URL form without re-verifying it (see [Verification](#veri
 | Concern                                                  | Source                                                                     |
 |----------------------------------------------------------|----------------------------------------------------------------------------|
 | What the action does, inputs, outputs, supported reports | [`README.md`](README.md)                                                   |
-| Setup, commands, which check runs where, conventions     | [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)                               |
+| How the action works inside                              | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)                             |
+| Setup, commands, conventions, tests, dependencies        | [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)                               |
+| Which check runs where, CI workflows, linter versions    | [`docs/CI.md`](docs/CI.md)                                                 |
 | Decisions and their rationale                            | [`docs/adr/`](docs/adr/README.md)                                          |
 | Hard constraints on the action code                      | [`.agents/rules/action-guardrails.md`](.agents/rules/action-guardrails.md) |
 | Code style and tooling                                   | [`.agents/rules/coding-standards.md`](.agents/rules/coding-standards.md)   |

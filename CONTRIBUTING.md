@@ -49,7 +49,7 @@ If you're new to the project and would like guidance on where to start, feel fre
 
 A change that affects how the badge is published or which URL it uses also needs the rendering
 check in a private repository described in
-[ADR-0001](docs/adr/0001-publish-badges-where-private-readmes-render-them.md).
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#where-the-badge-is-published).
 
 ### Pull Request Guidelines
 

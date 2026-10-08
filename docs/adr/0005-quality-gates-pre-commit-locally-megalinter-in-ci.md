@@ -36,7 +36,7 @@ while MegaLinter runs them, which shows the cost of the two lists drifting.
   ([ADR-0007](0007-non-python-linter-versions-follow-the-megalinter-image.md)), so a commit that
   passes locally does not fail there unless a Python linter's version differs.
 
-[`docs/DEVELOPMENT.md`](../DEVELOPMENT.md) keeps the map of which tool runs where.
+[`docs/CI.md`](../CI.md) keeps the map of which tool runs where.
 
 ## Consequences
 

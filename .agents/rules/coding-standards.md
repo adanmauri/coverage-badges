@@ -6,7 +6,7 @@ description: Coding standards for AI agents and humans working in Coverage Badge
 
 Binding checklist. The tools enforce most of it: `make check` locally, MegaLinter in CI
 ([ADR-0005](../../docs/adr/0005-quality-gates-pre-commit-locally-megalinter-in-ci.md)). The map of which
-tool runs where is in [`docs/DEVELOPMENT.md`](../../docs/DEVELOPMENT.md#quality-gates).
+tool runs where is in [`docs/CI.md`](../../docs/CI.md).
 
 ## Python
 

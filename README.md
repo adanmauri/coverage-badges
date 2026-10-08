@@ -177,7 +177,7 @@ make help    # every target
 The test suite runs `publish-badge.sh` against a local bare repository, so it needs `git`. The CI
 also runs the action on this repository to publish its own badge, and checks the generator with the
 system Python 3.10 of Ubuntu 22.04. CI lints and scans with MegaLinter and a daily security scan;
-see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#quality-gates).
+see [docs/CI.md](docs/CI.md).
 
 AI agents follow [AGENTS.md](AGENTS.md), with rules and skills under [`.agents/`](.agents/README.md).
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
