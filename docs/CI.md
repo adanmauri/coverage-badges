@@ -102,7 +102,7 @@ itself.
 |----------------------|----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
 | `tests.yaml`         | push to `main`; PRs that touch the action, its scripts, `src/`, `tests/` or the Python setup | tests with coverage, then the action publishes the badge (`main` only); the generator on the system Python 3.10 of Ubuntu 22.04 |
 | `code-quality.yaml`  | push and PR to `main`                                                                        | MegaLinter (Python flavor): the changed files on PRs, everything on `main` and on PRs that change linter settings               |
-| `security.yaml`      | push and PR to `main`, daily                                                                 | Trivy (results in the Security tab) and Bandit (report in the job summary); neither blocks                                      |
+| `security.yaml`      | push and PR to `main`, daily                                                                 | Trivy (results in the Security tab, except from PRs) and Bandit (report in the job summary); neither blocks                     |
 | `todo-to-issue.yaml` | push to `main`                                                                               | turns `TODO` and `FIXME` comments in code into issues                                                                           |
 
 Every workflow starts with no permissions (`permissions: {}`), and each job asks for what it needs.

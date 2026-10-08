@@ -66,7 +66,11 @@ jobs:
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3.38.2
-        if: always() && steps.trivy-scan.outcome != 'skipped' && hashFiles('trivy-results.sarif') != ''
+        # Not on pull requests: those from forks and from Dependabot get a read-only token, and the
+        # Security tab tracks main, which the push and the daily run cover.
+        if: >-
+          always() && github.event_name != 'pull_request' &&
+          steps.trivy-scan.outcome != 'skipped' && hashFiles('trivy-results.sarif') != ''
         with:
           sarif_file: "trivy-results.sarif"
           wait-for-processing: true

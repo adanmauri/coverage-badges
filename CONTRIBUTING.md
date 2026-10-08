@@ -45,7 +45,8 @@ If you're new to the project and would like guidance on where to start, feel fre
 4. Run `make check` until it passes; the commit hook runs the same linters on staged files
 5. Commit with [Conventional Commits](https://www.conventionalcommits.org/):
    `feat(parser): read Clover reports`, `fix(publish): retry on a rejected push`
-6. Push to your fork and open a Pull Request
+6. Push to your fork and open a Pull Request. The first time you contribute, a maintainer
+   approves the CI run before it starts.
 
 A change that affects how the badge is published or which URL it uses also needs the rendering
 check in a private repository described in
@@ -57,7 +58,7 @@ check in a private repository described in
 - Fill the PR template; under Test plan, list only what you actually ran
 - Aim for atomic commits (one logical change per commit)
 - If your PR changes inputs, outputs or badge URLs for users pinned to `@v1`, say so in the title
-  with `!` (`feat(action)!: ...`) and explain it under Notes
+  with `!` (`feat(action)!: ...`) and explain it under Breaking change
 - Keep PRs focused: avoid mixing unrelated changes
 - If a PR is not ready for review, mark it as a Draft
 - Update the README, `action.yml` descriptions and docs when you change behavior
